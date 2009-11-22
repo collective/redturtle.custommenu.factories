@@ -1,0 +1,33 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="redturtle.custommenu.factories">
+
+<body>
+
+<metal:main fill-slot="main">
+
+<div id="region-content" class="documentContent">
+
+	<h1 class="documentFirstHeading">
+    		Manage factories menu
+	</h1>
+
+    <a href=""
+       class="link-parent"
+       tal:attributes="href context/absolute_url">
+    Return
+    </a>
+
+Bla bla bla
+
+</div>
+
+</metal:main>
+
+</body>
+</html>
