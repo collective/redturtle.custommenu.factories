@@ -9,4 +9,15 @@
       permission="redturtle.custommenu.factories.Manage"
       />
 
+  <browser:resource
+        name="rt_manageform.js"
+        file="rt_manageform.js"
+        />
+
+  <browser:resource
+        name="rt_manageform.css"
+        file="rt_manageform.css"
+        />
+
+
 </configure>
