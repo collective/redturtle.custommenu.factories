@@ -10,8 +10,8 @@
 <body>
 
 <metal:js fill-slot="javascript_head_slot">
-	<script type="text/javascript"
-	        tal:attributes="src string:${context/portal_url}/++resource++rt_manageform.js"></script>
+	<!--script type="text/javascript"
+	        tal:attributes="src string:${context/portal_url}/++resource++rt_manageform.js"></script-->
 	
 	<link rel="stylesheet" media="screen" type="text/css"
 	      tal:attributes="href string:${context/portal_url}/++resource++rt_manageform.css" />
@@ -32,8 +32,72 @@
     Return
     </a>
 
-	<div class="menu-element new-menu-element">
-		<form id="new-menu-element" action="">
+	<div class="menu-customization-container list-menu-elements">
+		<form id="list-menu-elements" action="" method="post"
+		      tal:define="customizations view/listCustomizations">
+			<fieldset>
+				<legend i18n:translate="">Customized menu elements</legend>
+				<ul>
+					<li tal:repeat="customization customizations">
+					<tal:loopcustomizations define="index repeat/customization/index">
+						<input type="hidden" name="index" tal:attributes="value customization/index" />
+						<div class="menu-data-row">
+							<div class="label-container">
+								<label tal:attributes="for string:element-name-$index"
+								       i18n:translate="">Element name:</label>
+							</div>
+							<input type="text"
+							       tal:attributes="id string:element-name-$index;
+							                       value customization/element-name;"
+							       name="element-name" size="50" />
+						</div>
+						<div class="menu-data-row">
+							<div class="label-container">
+								<label tal:attributes="for string:element-descr-$index"
+								       i18n:translate="">Element description:</label>
+							</div>
+							<input type="text"
+							       tal:attributes="id string:element-descr-$index;
+							                       value customization/element-descr;"
+							       name="element-descr" size="50" />
+						</div>
+						<div class="menu-data-row">		
+							<div class="label-container">
+								<label tal:attributes="for string:condition-tales-$index"
+								       i18n:translate="">TALES condition:</label>
+							</div>
+							<input type="text"
+							       tal:attributes="id string:condition-tales-$index;
+							                       value customization/condition-tales;"
+							       name="condition-tales" size="50" />
+						</div>
+						<div class="menu-data-row">		
+							<div class="label-container">
+								<label tal:attributes="for string:element-tales-$index"
+								       i18n:translate="">TALES expression for URL:</label>
+							</div>
+							<input type="text"
+							       tal:attributes="id string:element-tales-$index;
+							                       value customization/element-tales;"
+							       name="element-tales" size="50" />
+						</div>
+						<div class="menu-data-row menu-data-row-commands">		
+							<input type="checkbox"
+							       tal:attributes="id string:delete-$index;"
+							       name="delete" />
+							<label tal:attributes="for string:delete-$index"
+							       i18n:translate="">Delete?</label>
+						</div>						
+					</tal:loopcustomizations>
+					</li>
+				</ul>
+
+			</fieldset>
+		</form>
+	</div>
+
+	<div class="menu-customization-container new-menu-element">
+		<form id="new-menu-element" action="" method="post">
 			<fieldset>
 				<legend i18n:translate="">New menu element</legend>
 				<div class="menu-data-row">
@@ -41,31 +105,31 @@
 						<label for="element-name"
 						       i18n:translate="">Element name:</label>
 					</div>
-					<input id="element-name" name="element-name" value="" size="50" />
+					<input type="text" id="element-name" name="element-name" value="" size="50" />
 				</div>
 				<div class="menu-data-row">
 					<div class="label-container">
-						<label for="element-description"
+						<label for="element-descr"
 						       i18n:translate="">Element description:</label>
 					</div>
-					<input id="element-descr" name="element-descr" value="" size="50" />
+					<input type="text" id="element-descr" name="element-descr" value="" size="50" />
 				</div>
 				<div class="menu-data-row">		
 					<div class="label-container">
 						<label for="condition-tales"
 						       i18n:translate="">TALES condition:</label>
 					</div>
-					<input id="condition-tales" name="condition-tales" value="" size="50" />
+					<input type="text" id="condition-tales" name="condition-tales" value="" size="50" />
 				</div>
 				<div class="menu-data-row">		
 					<div class="label-container">
 						<label for="element-tales"
 						       i18n:translate="">TALES expression for URL:</label>
 					</div>
-					<input id="element-tales" name="element-tales" value="" size="50" />
+					<input type="text" id="element-tales" name="element-tales" value="" size="50" />
 				</div>
 				<div class="visualClear"><!-- --></div>
-				<input type="submit" name="Add" value="Add this"
+				<input type="submit" name="add-command" value="Add this"
 				       id="add-new-element-menu" i18n:attributes="value" class="context" />
 			</fieldset>
 		</form>

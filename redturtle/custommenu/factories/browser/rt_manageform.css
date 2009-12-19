@@ -12,3 +12,14 @@
 	line-height: 2em;
 	clear:both;
 }
+
+.list-menu-elements ul {
+	list-style-type: none;
+	list-style-image: none;
+}
+
+.list-menu-elements li {
+	margin-bottom: 0.5em;
+	padding: 1em;
+	border: 1px solid #8CACBB;
+}

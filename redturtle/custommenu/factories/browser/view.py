@@ -6,6 +6,7 @@ from zope.annotation.interfaces import IAnnotations
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from redturtle.custommenu.factories import custommenuMessageFactory as _
 
 from redturtle.custommenu.factories.interfaces import ICustomMenuEnabled
 
@@ -20,21 +21,47 @@ class CustomizeFactoriesMenu(BrowserView):
 
     template = ViewPageTemplateFile('view.pt')
 
-    def addMenuEntry(self, form):
+    def _addMenuEntry(self, form):
         context = self.context
         alsoProvides(context, ICustomMenuEnabled)
         context.reindexObject('object_provides')
-        # now storing the data
+        
+        saved_customizations = self._getSavedCustomizations()
+        saved_customizations.append({'index': len(saved_customizations),
+                                     'element-name': form.get('element-name'),
+                                     'element-descr': form.get('element-descr'),
+                                     'condition-tales': form.get('condition-tales'),
+                                     'element-tales': form.get('element-tales'),
+                                     })
+        
         annotations = IAnnotations(context)
+        annotations[ANN_CUSTOMMENU_KEY] = saved_customizations
+        annotations._p_changed=1
+        return _(u'New entry added')
+
+    def _getSavedCustomizations(self):
+        context = self.context
+        annotations = IAnnotations(context)
+        if annotations.has_key(ANN_CUSTOMMENU_KEY):
+            return annotations[ANN_CUSTOMMENU_KEY]
+        return []
+
+    
+    def listCustomizations(self):
+        """Return all saved customization to be shown in the template"""
+        return self._getSavedCustomizations()
         
-        # BBB: to be continued
-        
-        return "{'response':'added'}"
     
     def __call__(self):
         request = self.request
         context = self.context
-        if request.form.get("action",'')=='add':
-            request.response.setHeader('Content-Type','application/json')
-            return self.addMenuEntry(request.form)
+        plone_utils = getToolByName(context, 'plone_utils')
+        message = None
+        if request.form.get("add-command",''):
+            # request.response.setHeader('Content-Type','application/json')
+            message = self._addMenuEntry(request.form)
+            request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
+            return
+        if message:
+            plone_utils.addPortalMessage(message, type='info')
         return self.template()
