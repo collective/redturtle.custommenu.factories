@@ -32,9 +32,10 @@
     Return
     </a>
 
-	<div class="menu-customization-container list-menu-elements">
-		<form id="list-menu-elements" action="" method="post"
-		      tal:define="customizations view/listCustomizations">
+	<div class="menu-customization-container list-menu-elements"
+	     tal:define="customizations view/listCustomizations"
+		 tal:condition="customizations">
+		<form id="list-menu-elements" action="" method="post">
 			<fieldset>
 				<legend i18n:translate="">Customized menu elements</legend>
 				<ul>
@@ -63,6 +64,16 @@
 						</div>
 						<div class="menu-data-row">		
 							<div class="label-container">
+								<label tal:attributes="for string:icon-tales-$index"
+								       i18n:translate="">TALES icon:</label>
+							</div>
+							<input type="text"
+							       tal:attributes="id string:icon-tales-$index;
+							                       value customization/icon-tales;"
+							       name="icon-tales" size="50" />
+						</div>
+						<div class="menu-data-row">		
+							<div class="label-container">
 								<label tal:attributes="for string:condition-tales-$index"
 								       i18n:translate="">TALES condition:</label>
 							</div>
@@ -83,15 +94,17 @@
 						</div>
 						<div class="menu-data-row menu-data-row-commands">		
 							<input type="checkbox"
-							       tal:attributes="id string:delete-$index;"
-							       name="delete" />
+							       tal:attributes="id string:delete-$index;
+								                   value index;"
+							       name="delete:list:int" />
 							<label tal:attributes="for string:delete-$index"
 							       i18n:translate="">Delete?</label>
 						</div>						
 					</tal:loopcustomizations>
 					</li>
 				</ul>
-
+				<input type="submit" name="delete-command" value="Delete selected"
+				       id="delete-elements-menu" i18n:attributes="value" class="context" />
 			</fieldset>
 		</form>
 	</div>
@@ -113,6 +126,13 @@
 						       i18n:translate="">Element description:</label>
 					</div>
 					<input type="text" id="element-descr" name="element-descr" value="" size="50" />
+				</div>
+				<div class="menu-data-row">		
+					<div class="label-container">
+						<label for="icon-tales"
+						       i18n:translate="">TALES icon:</label>
+					</div>
+					<input type="text" id="icon-tales" name="icon-tales" value="" size="50" />
 				</div>
 				<div class="menu-data-row">		
 					<div class="label-container">

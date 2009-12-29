@@ -12,7 +12,7 @@ Of course, you can use this to add new non-standard stuff to the menu (like Java
 Idea behind this
 ================
 
-In my experience, many developed content types rise only for *usability* enhancement of Plone sites.
+In my experience, many developed content types arise only for *usability* enhancement of Plone sites.
 
 One of the best (worst?) example is Plone4ArtistsVideo product: users that want to add new video to a site
 must use the "*Add new...*" menu and select the *File* content.
