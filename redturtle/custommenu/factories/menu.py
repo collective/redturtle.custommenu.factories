@@ -28,13 +28,23 @@ class FactoriesMenu(PloneFactoriesMenu):
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
         results = PloneFactoriesMenu.getMenuItems(self, context, request)
-        portal = getToolByName(context, 'portal_url').getPortalObject()
+        portal_url = getToolByName(context, 'portal_url')
+
+        if IFolder.providedBy(context):
+            folder = context
+        elif self.isFolderOrFolderDefaultPage(context, request):
+            folder = aq_parent(aq_inner(context))
+        else:
+            # don't know how to handle this
+            folder = context
 
         # now put there local customizations (if any)
         talEngine = Expressions.getEngine()
-        data = {'context': context, 'portal': portal}
+        data = {'context': context, 'portal_url': portal_url, 'container': folder}
 
-        saved_customizations = self._getSavedCustomizations(context)
+        newResults = []
+        newIds = []
+        saved_customizations = self._getSavedCustomizations(folder)
         for c in saved_customizations:
             condition = c['condition-tales']
             if condition:
@@ -44,31 +54,36 @@ class FactoriesMenu(PloneFactoriesMenu):
                 except KeyError, inst:
                     print inst
                     continue
-                if result:
-                    # URL
-                    url = talEngine.compile(c['element-tales'])
-                    try:
-                        compiledURL = url(talEngine.getContext(data))
-                    except KeyError, inst:
-                        print inst
-                        continue
-                    # ICON
-                    icon = talEngine.compile(c['icon-tales'])
-                    try:
-                        compiledIcon = icon(talEngine.getContext(data))
-                    except KeyError, inst:
-                        print inst
-                        compiledIcon = None
-                    
-                    if compiledURL:
-                        results.append(self._formatNewEntry(c, compiledURL, compiledIcon))
 
-        if IFolder.providedBy(context):
-            folder = context
-        elif self.isFolderOrFolderDefaultPage(context, request):
-            folder = aq_parent(aq_inner(context))
-        else:
-            folder = None
+                if not result:
+                    continue
+
+            # URL
+            url = talEngine.compile(c['element-tales'])
+            try:
+                compiledURL = url(talEngine.getContext(data))
+            except KeyError, inst:
+                print inst
+                continue
+            # ICON
+            icon = talEngine.compile(c['icon-tales'])
+            try:
+                compiledIcon = icon(talEngine.getContext(data))
+            except KeyError, inst:
+                print inst
+                compiledIcon = None
+            
+            if compiledURL:
+                newElement = self._formatNewEntry(c, compiledURL, compiledIcon)
+                if newElement['extra']['id']:
+                    newIds.append(newElement['extra']['id'])
+                newResults.append(newElement)
+
+        # Spit off overriden element, using id
+        results = [x for x in results if x['extra']['id'] not in newIds]
+        results.extend(newResults)
+        # Re-sort
+        results.sort(lambda x, y: cmp(x['title'],y['title']))
 
         if folder:
             mtool = getToolByName(context, 'portal_membership')
@@ -92,7 +107,7 @@ class FactoriesMenu(PloneFactoriesMenu):
                 'selected'    : False,
                 'icon'        : icon,
                 'submenu'     : None,
-                'extra'       : {'separator': None, 'id': '', 'class': ''},
+                'extra'       : {'separator': None, 'id': customization['element-id'], 'class': ''},
                 }
 
     def _getSavedCustomizations(self, context):

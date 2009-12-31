@@ -21,24 +21,73 @@ class CustomizeFactoriesMenu(BrowserView):
 
     template = ViewPageTemplateFile('view.pt')
 
+    def __call__(self):
+        request = self.request
+        context = self.context
+        plone_utils = getToolByName(context, 'plone_utils')
+        message = None
+        if request.form.get("add-command",''):
+            # request.response.setHeader('Content-Type','application/json')
+            message = self._addMenuEntry(request.form)
+            request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
+            return
+        if request.form.get("update-command",''):
+            message = self._updateMenuEntries(request.form)
+            request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
+            return        
+        if request.form.get("delete-command",''):
+            message = self._deleteMenuEntries(request.form)
+            request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
+            return        
+        if message:
+            plone_utils.addPortalMessage(message, type='info')
+        return self.template()
+
     def _addMenuEntry(self, form):
         context = self.context
         alsoProvides(context, ICustomMenuEnabled)
         context.reindexObject('object_provides')
         
         saved_customizations = self._getSavedCustomizations()
-        saved_customizations.append({'index': len(saved_customizations),
-                                     'element-name': form.get('element-name'),
-                                     'element-descr': form.get('element-descr'),
-                                     'icon-tales': form.get('icon-tales'),
-                                     'condition-tales': form.get('condition-tales'),
-                                     'element-tales': form.get('element-tales'),
-                                     })
+        saved_customizations.append(self._generateNewMenuElement(
+                                        len(saved_customizations),
+                                        form.get('element-id'),
+                                        form.get('element-name'),
+                                        form.get('element-descr'),
+                                        form.get('icon-tales'),
+                                        form.get('condition-tales'),
+                                        form.get('element-tales'))
+                                    )
         
         annotations = IAnnotations(context)
         annotations[ANN_CUSTOMMENU_KEY] = saved_customizations
         annotations._p_changed=1
         return _(u'New entry added')
+
+    def _updateMenuEntries(self, form):
+        context = self.context
+        saved_customizations = []
+
+        for x in range(0, len(form.get('index',[]))):
+            saved_customizations.append(
+                self._generateNewMenuElement(x, form.get('element-id')[x], form.get('element-name')[x],
+                                             form.get('element-descr')[x], form.get('icon-tales')[x],
+                                             form.get('condition-tales')[x], form.get('element-tales')[x]))
+        
+        annotations = IAnnotations(context)
+        annotations[ANN_CUSTOMMENU_KEY] = saved_customizations
+        annotations._p_changed=1
+        return _(u'Customization/s updated')
+
+    def _generateNewMenuElement(self, index, id, name, descr, icon, condition, element):
+        return {'index': index,
+                'element-id': id,
+                'element-name': name,
+                'element-descr': descr,
+                'icon-tales': icon,
+                'condition-tales': condition,
+                'element-tales': element,
+                }
 
     def _deleteMenuEntries(self, form):
         context = self.context
@@ -72,22 +121,3 @@ class CustomizeFactoriesMenu(BrowserView):
         for x in range(0, len(customizations_list)):
             customizations_list[x]['index'] = x
         return customizations_list
-    
-    def __call__(self):
-        request = self.request
-        context = self.context
-        plone_utils = getToolByName(context, 'plone_utils')
-        message = None
-        if request.form.get("add-command",''):
-            # request.response.setHeader('Content-Type','application/json')
-            message = self._addMenuEntry(request.form)
-            request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
-            return
-        if request.form.get("delete-command",''):
-            # request.response.setHeader('Content-Type','application/json')
-            message = self._deleteMenuEntries(request.form)
-            request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
-            return        
-        if message:
-            plone_utils.addPortalMessage(message, type='info')
-        return self.template()
