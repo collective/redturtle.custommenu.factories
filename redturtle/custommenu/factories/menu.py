@@ -54,7 +54,6 @@ class FactoriesMenu(PloneFactoriesMenu):
                 except KeyError, inst:
                     print inst
                     continue
-
                 if not result:
                     continue
 

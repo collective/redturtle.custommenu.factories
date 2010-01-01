@@ -4,7 +4,7 @@
 
 function manageAddNewElement(data, textStatus) {
 	if (data && data.response) {
-		alert(data.response)
+		// TODO
 	}
 }
 
