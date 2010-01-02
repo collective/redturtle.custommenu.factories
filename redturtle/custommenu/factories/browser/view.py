@@ -4,13 +4,13 @@ from zope.interface import implements, alsoProvides
 from zope.annotation.interfaces import IAnnotations
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
 from redturtle.custommenu.factories import custommenuMessageFactory as _
-
 from redturtle.custommenu.factories.interfaces import ICustomMenuEnabled
-
-ANN_CUSTOMMENU_KEY = 'redturtle.custommenu.factories.elements'
 
 class CustomizeFactoriesMenu(BrowserView):
     """View for managing custom factories menu"""
@@ -30,25 +30,24 @@ class CustomizeFactoriesMenu(BrowserView):
             # request.response.setHeader('Content-Type','application/json')
             message = self._addMenuEntry(request.form)
             request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
-            return
-        if request.form.get("update-command",''):
+        elif request.form.get("update-command",''):
             message = self._updateMenuEntries(request.form)
             request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
-            return        
-        if request.form.get("delete-command",''):
+        elif request.form.get("delete-command",''):
             message = self._deleteMenuEntries(request.form)
             request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
-            return        
         if message:
             plone_utils.addPortalMessage(message, type='info')
+            return
         return self.template()
 
     def _addMenuEntry(self, form):
         context = self.context
-        alsoProvides(context, ICustomMenuEnabled)
-        context.reindexObject('object_provides')
+        if not ICustomMenuEnabled.providedBy(context):
+            alsoProvides(context, ICustomMenuEnabled)
+            context.reindexObject('object_provides')
         
-        saved_customizations = self._getSavedCustomizations()
+        extras, saved_customizations = self._getSavedCustomizations()
         saved_customizations.append(self._generateNewMenuElement(
                                         len(saved_customizations),
                                         form.get('element-id'),
@@ -60,7 +59,7 @@ class CustomizeFactoriesMenu(BrowserView):
                                     )
         
         annotations = IAnnotations(context)
-        annotations[ANN_CUSTOMMENU_KEY] = saved_customizations
+        annotations[ANN_CUSTOMMENU_KEY] = (extras, saved_customizations)
         annotations._p_changed=1
         return _(u'New entry added')
 
@@ -99,20 +98,31 @@ class CustomizeFactoriesMenu(BrowserView):
         
         annotations = IAnnotations(context)
         annotations[ANN_CUSTOMMENU_KEY] = saved_customizations
+        # BBB: also can be better to remove the ICustomMenuEnabled interface when last element is removed?
         annotations._p_changed=1
         return _(u'Customization/s removed')
-
 
     def _getSavedCustomizations(self):
         context = self.context
         annotations = IAnnotations(context)
         if annotations.has_key(ANN_CUSTOMMENU_KEY):
             return annotations[ANN_CUSTOMMENU_KEY]
-        return []
+        return ({'inherit': True}, [])
 
+    @property
     def listCustomizations(self):
         """Return all saved customization to be shown in the template"""
-        return self._getSavedCustomizations()
+        return self._getSavedCustomizations()[1]
+    
+    @property
+    def inherit(self):
+        return self._getSavedCustomizations()[0]['inherit']
+
+    @property
+    def onSiteRoot(self):
+        """Check if the context is the Plone site"""
+        # BBB: can leave to problems with subsites? To be tested
+        return IPloneSiteRoot.providedBy(self.context)
         
     def _reindex(self, customizations_list):
         """Fix all index inside a customizations structure.

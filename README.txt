@@ -125,5 +125,6 @@ TODO
 * javascript features for managing entries
 * code needs refactoring
 * make customization added to the site root available in every context, but make this inheritance optional
-  and locally blockable.
+  and locally blockable
+* tests on Plone 4
 

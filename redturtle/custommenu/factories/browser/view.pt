@@ -30,6 +30,19 @@
 		<form id="list-menu-elements" action="" method="post">
 			<fieldset>
 				<legend i18n:translate="">Customized menu elements</legend>
+				<div class="menu-data-row">
+					<input type="checkbox" id="inherit" name="inherit:bool"
+					       tal:attributes="checked python:view.inherit and 'checked' or ''"/>
+					<label for="inherit"
+                           i18n:translate="">Inherit</label>
+					<div class="formHelp" i18n:translate="portal_inherit_help" tal:condition="view/onSiteRoot">
+						Check this to make elements defined there available everywhere in the site.
+						Uncheck to make customizations available only in the site root.
+					</div>
+					<div class="formHelp" i18n:translate="context_inherit_help" tal:condition="not:view/onSiteRoot">
+						Check this to inherit also customizations from the site root.
+					</div>
+				</div>
 				<ul>
 					<li tal:repeat="customization customizations">
 					<tal:loopcustomizations define="index repeat/customization/index">

@@ -12,7 +12,7 @@ from Products.CMFCore.utils import getToolByName
 from OFS.interfaces import IFolder
 
 from redturtle.custommenu.factories import custommenuMessageFactory as _
-from redturtle.custommenu.factories.browser.view import ANN_CUSTOMMENU_KEY
+from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
 
 from Products.PageTemplates import Expressions
 from Products.PageTemplates.TALES import CompilerError
@@ -44,7 +44,7 @@ class FactoriesMenu(PloneFactoriesMenu):
 
         newResults = []
         newIds = []
-        saved_customizations = self._getSavedCustomizations(folder)
+        extras, saved_customizations = self._getSavedCustomizations(folder)
         for c in saved_customizations:
             condition = c['condition-tales']
             if condition:
@@ -113,4 +113,4 @@ class FactoriesMenu(PloneFactoriesMenu):
         annotations = IAnnotations(context)
         if annotations.has_key(ANN_CUSTOMMENU_KEY):
             return annotations[ANN_CUSTOMMENU_KEY]
-        return []
+        return ({}, [])
