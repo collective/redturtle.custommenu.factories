@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.1.0'
+version = '0.1.0a'
 
 setup(name='redturtle.custommenu.factories',
       version=version,
@@ -12,7 +12,7 @@ setup(name='redturtle.custommenu.factories',
       classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 3 - Alpha",
         ],
       keywords='plone menu factories customize',
       author='RedTurtle Technology',

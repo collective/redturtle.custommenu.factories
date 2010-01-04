@@ -6,7 +6,7 @@ from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
 from redturtle.custommenu.factories import custommenuMessageFactory as _
 
 from Products.PageTemplates import Expressions
-from Products.PageTemplates.TALES import CompilerError
+from zope.tales.tales import CompilerError
 
 from zope.component import getMultiAdapter
 
@@ -26,22 +26,21 @@ class MenuCoreAdapter(object):
                 'extra'       : {'separator': None, 'id': customization['element-id'], 'class': ''},
                 }
 
-    def getMenuCustomization(self, context, folder, results):
+    def getMenuCustomization(self, data, results):
         raise NotImplementedError("You must provide the getMenuCustomization method")
-
-class FolderFactoryMenuAdapter(MenuCoreAdapter):
-    implements(ICustomFactoryMenuProvider)
 
 class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
     implements(ICustomFactoryMenuProvider)
 
-    def getMenuCustomization(self, context, folder, results):
-        """Get saved menu customization from this context"""
-        portal_url = getToolByName(context, 'portal_url')
+    def getMenuCustomization(self, data, results):
+        """Get saved menu customization for a context that is the Plone site root
+        @data: a dict object used for evaluate TALES expressions
+        @results: a menu-like structure, normally obtained calling PloneFactoriesMenu.getMenuItems
+        @return: the new menu-like structure, with additional customizations
+        """
+        context = self.context
         talEngine = Expressions.getEngine()
-        data = {'context': context, 'portal_url': portal_url, 'container': folder}
-
-        view = getMultiAdapter((folder, folder.REQUEST), name=u'customize-factoriesmenu')
+        view = getMultiAdapter((context, context.REQUEST), name=u'customize-factoriesmenu')
 
         newResults = []
         newIds = []
@@ -82,4 +81,25 @@ class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
         # Spit off overriden elements, using id
         results = [x for x in results if x['extra']['id'] not in newIds]
         results.extend(newResults)
+        return results
+
+class FolderFactoryMenuAdapter(PloneSiteFactoryMenuAdapter):
+    implements(ICustomFactoryMenuProvider)
+
+    def getMenuCustomization(self, data, results):
+        """Get saved menu customization from folderish content. Is also possible to inherit
+        customization from the site root (if both inherit checks are True).
+        @data: a dict object used for evaluate TALES expressions
+        @results: a menu-like structure, normally obtained calling PloneFactoriesMenu.getMenuItems
+        @return: the new menu-like structure, with additional customizations
+        """
+        context = self.context
+        portal = getToolByName(context, 'portal_url').getPortalObject()
+        viewOnPortal = getMultiAdapter((portal, context.REQUEST), name=u'customize-factoriesmenu')
+        view = getMultiAdapter((context, context.REQUEST), name=u'customize-factoriesmenu')
+        if viewOnPortal.inherit and view.inherit:
+            siteResults = ICustomFactoryMenuProvider(portal).getMenuCustomization(data, results)
+            results = PloneSiteFactoryMenuAdapter.getMenuCustomization(self, data, siteResults)
+        else:
+            results = PloneSiteFactoryMenuAdapter.getMenuCustomization(self, data, results)
         return results

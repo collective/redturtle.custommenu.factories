@@ -32,7 +32,7 @@
 				<legend i18n:translate="">Customized menu elements</legend>
 				<div class="menu-data-row">
 					<input type="checkbox" id="inherit" name="inherit:bool"
-					       tal:attributes="checked python:view.inherit and 'checked' or ''"/>
+					       tal:attributes="checked python:view.inherit and 'checked' or False"/>
 					<label for="inherit"
                            i18n:translate="">Inherit</label>
 					<div class="formHelp" i18n:translate="portal_inherit_help" tal:condition="view/onSiteRoot">
