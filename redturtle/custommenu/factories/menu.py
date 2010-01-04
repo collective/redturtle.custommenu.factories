@@ -15,9 +15,6 @@ from redturtle.custommenu.factories import custommenuMessageFactory as _
 from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
 from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
 
-from Products.PageTemplates import Expressions
-from Products.PageTemplates.TALES import CompilerError
-
 class FactoriesMenu(PloneFactoriesMenu):
     implements(IFactoriesMenu)
 
@@ -29,7 +26,6 @@ class FactoriesMenu(PloneFactoriesMenu):
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
         results = PloneFactoriesMenu.getMenuItems(self, context, request)
-        portal_url = getToolByName(context, 'portal_url')
 
         # First of all, get the real context on the menu
         if IFolder.providedBy(context):
@@ -45,51 +41,9 @@ class FactoriesMenu(PloneFactoriesMenu):
         except TypeError:
             # For any adaptation problem
             return results
-        m_provider.foo()
+        
+        results = m_provider.getMenuCustomization(context, folder, results)
 
-        # now put there local customizations (if any)
-        talEngine = Expressions.getEngine()
-        data = {'context': context, 'portal_url': portal_url, 'container': folder}
-
-        newResults = []
-        newIds = []
-        extras, saved_customizations = self._getSavedCustomizations(folder)
-        for c in saved_customizations:
-            condition = c['condition-tales']
-            if condition:
-                compiledCondition = talEngine.compile(condition)
-                try:
-                    result = compiledCondition(talEngine.getContext(data))
-                except KeyError, inst:
-                    print inst
-                    continue
-                if not result:
-                    continue
-
-            # URL
-            url = talEngine.compile(c['element-tales'])
-            try:
-                compiledURL = url(talEngine.getContext(data))
-            except KeyError, inst:
-                print inst
-                continue
-            # ICON
-            icon = talEngine.compile(c['icon-tales'])
-            try:
-                compiledIcon = icon(talEngine.getContext(data))
-            except KeyError, inst:
-                print inst
-                compiledIcon = None
-            
-            if compiledURL:
-                newElement = self._formatNewEntry(c, compiledURL, compiledIcon)
-                if newElement['extra']['id']:
-                    newIds.append(newElement['extra']['id'])
-                newResults.append(newElement)
-
-        # Spit off overriden elements, using id
-        results = [x for x in results if x['extra']['id'] not in newIds]
-        results.extend(newResults)
         # Re-sort
         results.sort(lambda x, y: cmp(x['title'],y['title']))
 
@@ -107,19 +61,3 @@ class FactoriesMenu(PloneFactoriesMenu):
                                 })
         return results
 
-    def _formatNewEntry(self, customization, url, icon):
-        """Return a menu-like structure with the new additional element"""
-        return {'title'       : _(customization['element-name']),
-                'description' : _(customization['element-descr']),
-                'action'      : url,
-                'selected'    : False,
-                'icon'        : icon,
-                'submenu'     : None,
-                'extra'       : {'separator': None, 'id': customization['element-id'], 'class': ''},
-                }
-
-    def _getSavedCustomizations(self, context):
-        annotations = IAnnotations(context)
-        if annotations.has_key(ANN_CUSTOMMENU_KEY):
-            return annotations[ANN_CUSTOMMENU_KEY]
-        return ({'inherit': True}, [])

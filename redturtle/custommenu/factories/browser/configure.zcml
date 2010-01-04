@@ -7,6 +7,7 @@
       name="customize-factoriesmenu"
       class=".view.CustomizeFactoriesMenu"
       permission="redturtle.custommenu.factories.Manage"
+      allowed_attributes="getSavedCustomizations"
       />
 
   <browser:resource

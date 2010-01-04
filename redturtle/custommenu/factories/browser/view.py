@@ -47,7 +47,7 @@ class CustomizeFactoriesMenu(BrowserView):
             alsoProvides(context, ICustomMenuEnabled)
             context.reindexObject('object_provides')
         
-        extras, saved_customizations = self._getSavedCustomizations()
+        extras, saved_customizations = self.getSavedCustomizations()
         saved_customizations.append(self._generateNewMenuElement(
                                         len(saved_customizations),
                                         form.get('element-id'),
@@ -90,7 +90,7 @@ class CustomizeFactoriesMenu(BrowserView):
 
     def _deleteMenuEntries(self, form):
         context = self.context
-        saved_customizations = self._getSavedCustomizations()
+        saved_customizations = self.getSavedCustomizations()
 
         to_delete = form.get('delete',[])
         saved_customizations = [x for x in saved_customizations if x['index'] not in to_delete]
@@ -102,7 +102,7 @@ class CustomizeFactoriesMenu(BrowserView):
         annotations._p_changed=1
         return _(u'Customization/s removed')
 
-    def _getSavedCustomizations(self):
+    def getSavedCustomizations(self):
         context = self.context
         annotations = IAnnotations(context)
         if annotations.has_key(ANN_CUSTOMMENU_KEY):
@@ -112,11 +112,11 @@ class CustomizeFactoriesMenu(BrowserView):
     @property
     def listCustomizations(self):
         """Return all saved customization to be shown in the template"""
-        return self._getSavedCustomizations()[1]
+        return self.getSavedCustomizations()[1]
     
     @property
     def inherit(self):
-        return self._getSavedCustomizations()[0]['inherit']
+        return self.getSavedCustomizations()[0]['inherit']
 
     @property
     def onSiteRoot(self):
