@@ -12,6 +12,7 @@ setup(name='redturtle.custommenu.factories',
       classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",
+        "Development Status :: 4 - Beta",
         ],
       keywords='plone menu factories customize',
       author='RedTurtle Technology',

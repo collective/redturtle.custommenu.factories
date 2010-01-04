@@ -13,6 +13,7 @@ from OFS.interfaces import IFolder
 
 from redturtle.custommenu.factories import custommenuMessageFactory as _
 from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
+from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
 
 from Products.PageTemplates import Expressions
 from Products.PageTemplates.TALES import CompilerError
@@ -30,6 +31,7 @@ class FactoriesMenu(PloneFactoriesMenu):
         results = PloneFactoriesMenu.getMenuItems(self, context, request)
         portal_url = getToolByName(context, 'portal_url')
 
+        # First of all, get the real context on the menu
         if IFolder.providedBy(context):
             folder = context
         elif self.isFolderOrFolderDefaultPage(context, request):
@@ -37,6 +39,13 @@ class FactoriesMenu(PloneFactoriesMenu):
         else:
             # don't know how to handle this
             folder = context
+
+        try:
+            m_provider = ICustomFactoryMenuProvider(folder)
+        except TypeError:
+            # For any adaptation problem
+            return results
+        m_provider.foo()
 
         # now put there local customizations (if any)
         talEngine = Expressions.getEngine()
@@ -78,7 +87,7 @@ class FactoriesMenu(PloneFactoriesMenu):
                     newIds.append(newElement['extra']['id'])
                 newResults.append(newElement)
 
-        # Spit off overriden element, using id
+        # Spit off overriden elements, using id
         results = [x for x in results if x['extra']['id'] not in newIds]
         results.extend(newResults)
         # Re-sort
@@ -113,4 +122,4 @@ class FactoriesMenu(PloneFactoriesMenu):
         annotations = IAnnotations(context)
         if annotations.has_key(ANN_CUSTOMMENU_KEY):
             return annotations[ANN_CUSTOMMENU_KEY]
-        return ({}, [])
+        return ({'inherit': True}, [])

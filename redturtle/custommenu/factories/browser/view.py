@@ -74,7 +74,7 @@ class CustomizeFactoriesMenu(BrowserView):
                                              form.get('condition-tales')[x], form.get('element-tales')[x]))
         
         annotations = IAnnotations(context)
-        annotations[ANN_CUSTOMMENU_KEY] = saved_customizations
+        annotations[ANN_CUSTOMMENU_KEY] = ({'inherit': form.get('inherit',True)}, saved_customizations)
         annotations._p_changed=1
         return _(u'Customization/s updated')
 

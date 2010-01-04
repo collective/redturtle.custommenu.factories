@@ -10,6 +10,7 @@
       title="Customize menu: factories"
      />
 
+  <include package=".adapters" />
   <include package=".browser" />
   
   <include file="profiles.zcml" />
