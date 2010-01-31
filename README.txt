@@ -117,7 +117,7 @@ Also you can inherit the customization done in the site root everywhere in the s
 other customizations. You can also locally block the inherit of root customization but you can also make
 new menu elements defined in the root available only in the root itself.
 
-Also, you can five a right *id* to new entries not only to override menu element from Plone normal
+Also, you can give a right *id* to new entries not only to override menu element from Plone normal
 behaviour, but also for change a customization done in the site root.
 
 .. figure:: http://keul.it/images/plone/redturtle.customizemenu.factories2.png
@@ -131,8 +131,8 @@ In the TALES expression above, you can use those variables:
  `context`
      The current context, as Plone normal meaning
  `container`
-     The container of the current context, or the context itself if the context is a container or you
-     are viewing a *default document* in a folder.
+     The container of the current context, or the context itself if the context is a container. This is
+     useful when writing expression that keep in mind the default document in a folder.
  `portal_url`
      The *portal_url* tool, taken from the Plone site.
 

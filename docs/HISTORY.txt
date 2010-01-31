@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.0b - (2010-??-??)
+---------------------
+
+* Now local customizations must be enabled and disabled directly
+
 0.1.0a - (2010-01-04)
 ---------------------
 

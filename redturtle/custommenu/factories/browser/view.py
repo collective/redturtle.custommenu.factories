@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from zope.interface import implements, alsoProvides
+from zope.interface import implements, alsoProvides, noLongerProvides
 from zope.annotation.interfaces import IAnnotations
 
 from Products.CMFCore.utils import getToolByName
@@ -20,6 +20,7 @@ class CustomizeFactoriesMenu(BrowserView):
         request.set('disable_border', True)
 
     template = ViewPageTemplateFile('view.pt')
+    enable_template = ViewPageTemplateFile('enabled.pt')
 
     def __call__(self):
         request = self.request
@@ -36,17 +37,23 @@ class CustomizeFactoriesMenu(BrowserView):
         elif request.form.get("delete-command",''):
             message = self._deleteMenuEntries(request.form)
             request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')
+        elif request.form.get("enable-command",''):
+            self.enable()
+            message = _(u"Enabled local customizations")
+            request.response.redirect(context.absolute_url()+'/@@customize-factoriesmenu')            
+        elif request.form.get("disable-command",''):
+            self.disable()
+            message = _(u"Local customizations disabled")
+            request.response.redirect(context.absolute_url())            
         if message:
             plone_utils.addPortalMessage(message, type='info')
             return
-        return self.template()
+        if self.enabled:
+            return self.template()
+        return self.enable_template()
 
     def _addMenuEntry(self, form):
-        context = self.context
-        if not ICustomMenuEnabled.providedBy(context):
-            alsoProvides(context, ICustomMenuEnabled)
-            context.reindexObject('object_provides')
-        
+        context = self.context        
         extras, saved_customizations = self.getSavedCustomizations()
         saved_customizations.append(self._generateNewMenuElement(
                                         len(saved_customizations),
@@ -101,6 +108,31 @@ class CustomizeFactoriesMenu(BrowserView):
         # BBB: also can be better to remove the ICustomMenuEnabled interface when last element is removed?
         annotations._p_changed=1
         return _(u'Customization/s removed')
+
+    def enable(self):
+        """Enabled local customization, adding the annotation structure"""
+        context = self.context
+        annotations = IAnnotations(context)
+        alsoProvides(context, ICustomMenuEnabled)
+        context.reindexObject('object_provides')
+        annotations[ANN_CUSTOMMENU_KEY] = self.getSavedCustomizations()
+    
+    def disable(self):
+        """Disable local customization, removing annotation data"""
+        context = self.context
+        annotations = IAnnotations(context)
+        try:
+            del annotations[ANN_CUSTOMMENU_KEY]
+            noLongerProvides(context, ICustomMenuEnabled)
+            context.reindexObject('object_provides')
+        except KeyError:
+            pass
+
+    @property
+    def enabled(self):
+        context = self.context
+        annotations = IAnnotations(context)
+        return annotations.has_key(ANN_CUSTOMMENU_KEY)
 
     def getSavedCustomizations(self):
         context = self.context

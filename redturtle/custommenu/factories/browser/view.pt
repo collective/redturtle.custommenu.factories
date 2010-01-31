@@ -24,13 +24,27 @@
     Return
     </a>
 
-	<div class="menu-customization-container list-menu-elements"
+	<div class="menuCustomizationContainer disableMenuCustomization"
+		 tal:condition="view/enabled">
+		<form id="enableCustomization" action="" method="post">
+			<fieldset>
+				<legend i18n:translate="">Disable menu customizations here</legend>
+				<div class="formHelp" i18n:translate="help_enable_customizations">
+					Click the button below disable the customization feature in the current context
+				</div>
+				<input type="submit" name="disable-command" value="Disable"
+				       id="disable-command" i18n:attributes="value" class="standalone" />
+			</fieldset>
+		</form>
+	</div>
+
+	<div class="menuCustomizationContainer listMenuElements"
 	     tal:define="customizations view/listCustomizations"
 		 tal:condition="customizations">
-		<form id="list-menu-elements" action="" method="post">
+		<form id="listMenuElements" action="" method="post">
 			<fieldset>
 				<legend i18n:translate="">Customized menu elements</legend>
-				<div class="menu-data-row">
+				<div class="menuDataRow">
 					<input type="checkbox" id="inherit" name="inherit:bool"
 					       tal:attributes="checked python:view.inherit and 'checked' or False"/>
 					<label for="inherit"
@@ -47,8 +61,8 @@
 					<li tal:repeat="customization customizations">
 					<tal:loopcustomizations define="index repeat/customization/index">
 						<input type="hidden" name="index:list:int" tal:attributes="value customization/index" />
-						<div class="menu-data-row">
-							<div class="label-container">
+						<div class="menuDataRow">
+							<div class="labelContainer">
 								<label tal:attributes="for string:element-id-$index"
 								       i18n:translate="">Element id</label>
 							</div>
@@ -57,8 +71,8 @@
 							                       value customization/element-id;"
 							       name="element-id:list" size="50" />
 						</div>
-						<div class="menu-data-row">
-							<div class="label-container">
+						<div class="menuDataRow">
+							<div class="labelContainer">
 								<label tal:attributes="for string:element-name-$index"
 								       i18n:translate="">Element name</label>
 					            <span class="fieldRequired" title="Required"
@@ -70,8 +84,8 @@
 							                       value customization/element-name;"
 							       name="element-name:list" size="50" />
 						</div>
-						<div class="menu-data-row">
-							<div class="label-container">
+						<div class="menuDataRow">
+							<div class="labelContainer">
 								<label tal:attributes="for string:element-descr-$index"
 								       i18n:translate="">Element description</label>
 							</div>
@@ -80,8 +94,8 @@
 							                       value customization/element-descr;"
 							       name="element-descr:list" size="50" />
 						</div>
-						<div class="menu-data-row">		
-							<div class="label-container">
+						<div class="menuDataRow">		
+							<div class="labelContainer">
 								<label tal:attributes="for string:icon-tales-$index"
 								       i18n:translate="">TALES icon</label>
 							</div>
@@ -90,8 +104,8 @@
 							                       value customization/icon-tales;"
 							       name="icon-tales:list" size="50" />
 						</div>
-						<div class="menu-data-row">		
-							<div class="label-container">
+						<div class="menuDataRow">		
+							<div class="labelContainer">
 								<label tal:attributes="for string:condition-tales-$index"
 								       i18n:translate="">TALES condition</label>
 							</div>
@@ -100,8 +114,8 @@
 							                       value customization/condition-tales;"
 							       name="condition-tales:list" size="50" />
 						</div>
-						<div class="menu-data-row">		
-							<div class="label-container">
+						<div class="menuDataRow">		
+							<div class="labelContainer">
 								<label tal:attributes="for string:element-tales-$index"
 								       i18n:translate="">TALES expression for URL</label>
 					            <span class="fieldRequired" title="Required"
@@ -113,7 +127,7 @@
 							                       value customization/element-tales;"
 							       name="element-tales:list" size="50" />
 						</div>
-						<div class="menu-data-row menu-data-row-commands">		
+						<div class="menuDataRow menuDataRowCommands">		
 							<input type="checkbox"
 							       tal:attributes="id string:delete-$index;
 								                   value index;"
@@ -136,15 +150,15 @@
 		<form id="new-menu-element" action="" method="post">
 			<fieldset>
 				<legend i18n:translate="">New menu element</legend>
-				<div class="menu-data-row">
-					<div class="label-container">
+				<div class="menuDataRow">
+					<div class="labelContainer">
 						<label for="element-id"
 						       i18n:translate="">Element id</label>
 					</div>
 					<input type="text" id="element-id" name="element-id" value="" size="50" />
 				</div>
-				<div class="menu-data-row">
-					<div class="label-container">
+				<div class="menuDataRow">
+					<div class="labelContainer">
 						<label for="element-name"
 						       i18n:translate="">Element name</label>
 			            <span class="fieldRequired" title="Required"
@@ -153,29 +167,29 @@
 					</div>
 					<input type="text" id="element-name" name="element-name" value="" size="50" />
 				</div>
-				<div class="menu-data-row">
-					<div class="label-container">
+				<div class="menuDataRow">
+					<div class="labelContainer">
 						<label for="element-descr"
 						       i18n:translate="">Element description</label>
 					</div>
 					<input type="text" id="element-descr" name="element-descr" value="" size="50" />
 				</div>
-				<div class="menu-data-row">		
-					<div class="label-container">
+				<div class="menuDataRow">		
+					<div class="labelContainer">
 						<label for="icon-tales"
 						       i18n:translate="">TALES icon</label>
 					</div>
 					<input type="text" id="icon-tales" name="icon-tales" value="" size="50" />
 				</div>
-				<div class="menu-data-row">		
-					<div class="label-container">
+				<div class="menuDataRow">		
+					<div class="labelContainer">
 						<label for="condition-tales"
 						       i18n:translate="">TALES condition</label>
 					</div>
 					<input type="text" id="condition-tales" name="condition-tales" value="" size="50" />
 				</div>
-				<div class="menu-data-row">		
-					<div class="label-container">
+				<div class="menuDataRow">		
+					<div class="labelContainer">
 						<label for="element-tales"
 						       i18n:translate="">TALES expression for URL</label>
 			            <span class="fieldRequired" title="Required"
