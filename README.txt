@@ -147,8 +147,7 @@ TODO
 ====
 
 * localization
-* browser tests
 * javascript features for managing entries
 * code needs refactoring
-* tests on Plone 4
+* compatibility with Plone 4
 
