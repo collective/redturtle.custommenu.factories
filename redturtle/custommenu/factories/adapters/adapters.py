@@ -52,7 +52,6 @@ class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
                 try:
                     result = compiledCondition(talEngine.getContext(data))
                 except KeyError, inst:
-                    print inst
                     continue
                 if not result:
                     continue
@@ -62,7 +61,7 @@ class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
             try:
                 compiledURL = url(talEngine.getContext(data))
             except KeyError, inst:
-                print inst
+                context.plone_log("customize-factoriesmenu error: can't use the \"%s\" TALES expression" % condition)
                 continue
             # ICON
             icon = talEngine.compile(c['icon-tales'])

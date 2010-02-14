@@ -4,9 +4,16 @@ Changelog
 0.2.0b - (2010-??-??)
 ---------------------
 
-* Now local customizations must be enabled and disabled directly
+* Now local customizations must be enabled and disabled per-context
+* Fixes to XHTML structure and validation
+* Fixed CSS class names to be camelCase as Plone does
+* Added tests
+* Fixed templates to be test compatible
+* Fixed a bug on entry deletion
+* Added missing check on required element for entries (that was in facts mandatory)
 
 0.1.0a - (2010-01-04)
 ---------------------
 
 * Initial release
+

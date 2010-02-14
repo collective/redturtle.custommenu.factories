@@ -4,8 +4,10 @@ Summary
 This product make possible the customization of the Plone "*Add new...*" menu, commonly filled
 from the Plone available content types.
 
-This is designed for avoiding useless content types but, at the same time, help UI experience of not
-experienced users.
+This is designed for avoiding useless content types but, at the same time, help UI experience of
+non-technical users.
+
+This product has been tested on **Plone 3.3**.
 
 You can use this to add new non-standard stuff to the menu (like Javascript links). See below.
 
@@ -14,9 +16,11 @@ Idea behind this
 
 The case is related to developed content types that gets added to Plone only for *usability* enhancements.
 
-One example: have you ever used Plone4ArtistsVideo, or collective.flowplayer?
+One example: have you ever used Plone4ArtistsVideo, or `collective.flowplayer`__?
 In those products users that want to add new video to a site must use the "*Add new...*" menu and select
 the *File* content.
+
+__ http://pypi.python.org/pypi/collective.flowplayer
 
 So the editor (that is *never* a developer in real life... you must accept it) must know that when he add
 a new file, it magically became a video... This is not so simple to understand; also is impossible to
@@ -37,7 +41,7 @@ So:
 
 * user know that for adding new content types, they must use the "*Add new...*"
 * users often ignores the magic behind Plone (like the File that became a Video)
-* developer don't like to add new silly content types only to help editors.
+* developer don't like to add new silly content types only to help end users (no, the are not bad guys).
 
 The problem above is related to the not-customizable state of the "Add new..." menu: the editor and the
 developer will be both happy if a new, fake entry could be added to this menu.
@@ -46,7 +50,9 @@ Going back to the video example:
 * the classic *File* entry (that point to *http://myhost/mysite/createObject?type_name=File*)
 * a new "Video" entry (again pointing to *http://myhost/mysite/createObject?type_name=File*)
 
-This products is designed only for this or similar usability issues.
+This products is designed only for this or similar usability issues, however can help you to customize
+existing elements of the menu on context (for example: the action of adding a new "News Item" content in
+a folder can be customized to be an alias for another content type, but only for this special folder)
 
 How to use
 ==========
@@ -84,7 +90,8 @@ Customize the menu
 ------------------
 
 In your "Add new..." menu you'll find a new "*Customize menu...*" entry. This will lead you to a
-customization form where you can manage local menu changes of the current context.
+form where you must enable customization feature on the current context.
+After this you can use the a customization form where you can manage local menu changes.
 
 .. figure:: http://keul.it/images/plone/redturtle.customizemenu.factories1.png
    :align: left

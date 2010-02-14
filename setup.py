@@ -3,6 +3,8 @@ import os
 
 version = '0.2.0b'
 
+tests_require=['zope.testing']
+
 setup(name='redturtle.custommenu.factories',
       version=version,
       description="Customize the Plone \"add portal content\" menu",
@@ -27,6 +29,9 @@ setup(name='redturtle.custommenu.factories',
           'setuptools',
           # -*- Extra requirements: -*-
       ],
+      tests_require=tests_require,
+      extras_require=dict(tests=tests_require),
+      test_suite = 'redturtle.custommenu.factories.tests.test_doctest.test_suite',
       entry_points="""
       # -*- Entry points: -*-
       """,

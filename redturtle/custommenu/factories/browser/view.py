@@ -46,14 +46,23 @@ class CustomizeFactoriesMenu(BrowserView):
             message = _(u"Local customizations disabled")
             request.response.redirect(context.absolute_url())            
         if message:
-            plone_utils.addPortalMessage(message, type='info')
+            if type(message)==tuple:
+                message, tp = message
+            else:
+                tp = 'info'
+            plone_utils.addPortalMessage(message, type=tp)
             return
         if self.enabled:
             return self.template()
         return self.enable_template()
 
     def _addMenuEntry(self, form):
-        context = self.context        
+        context = self.context
+        
+        # check not-mandatory data
+        if not form.get('element-name') or not form.get('element-tales'):
+            return _(u'Please, provide all required data'), 'error'
+        
         extras, saved_customizations = self.getSavedCustomizations()
         saved_customizations.append(self._generateNewMenuElement(
                                         len(saved_customizations),
@@ -75,6 +84,9 @@ class CustomizeFactoriesMenu(BrowserView):
         saved_customizations = []
 
         for x in range(0, len(form.get('index',[]))):
+            # check not-mandatory data
+            if not form.get('element-name')[x] or not form.get('element-tales')[x]:
+                return _(u'Please, provide all required data'), 'error'
             saved_customizations.append(
                 self._generateNewMenuElement(x, form.get('element-id')[x], form.get('element-name')[x],
                                              form.get('element-descr')[x], form.get('icon-tales')[x],
@@ -97,15 +109,16 @@ class CustomizeFactoriesMenu(BrowserView):
 
     def _deleteMenuEntries(self, form):
         context = self.context
-        saved_customizations = self.getSavedCustomizations()
+        extras, saved_customizations = self.getSavedCustomizations()
 
         to_delete = form.get('delete',[])
+        if not to_delete:
+            return _(u'Please, select at least one entry to be deleted'), 'error'
         saved_customizations = [x for x in saved_customizations if x['index'] not in to_delete]
         self._reindex(saved_customizations)
         
         annotations = IAnnotations(context)
-        annotations[ANN_CUSTOMMENU_KEY] = saved_customizations
-        # BBB: also can be better to remove the ICustomMenuEnabled interface when last element is removed?
+        annotations[ANN_CUSTOMMENU_KEY] = (extras, saved_customizations)
         annotations._p_changed=1
         return _(u'Customization/s removed')
 

@@ -11,7 +11,7 @@
 
 <metal:main fill-slot="main">
 
-<div id="region-content" class="documentContent menumanage">
+<div id="customize-area" class="menumanage">
 
 	<h1 class="documentFirstHeading">
     		Manage factories menu
@@ -26,7 +26,8 @@
 
 	<div class="menuCustomizationContainer disableMenuCustomization"
 		 tal:condition="view/enabled">
-		<form id="enableCustomization" action="" method="post">
+		<form id="enableCustomization" method="post"
+		      tal:attributes="action string:${context/absolute_url}/@@customize-factoriesmenu">
 			<fieldset>
 				<legend i18n:translate="">Disable menu customizations here</legend>
 				<div class="formHelp" i18n:translate="help_enable_customizations">
@@ -41,7 +42,8 @@
 	<div class="menuCustomizationContainer listMenuElements"
 	     tal:define="customizations view/listCustomizations"
 		 tal:condition="customizations">
-		<form id="listMenuElements" action="" method="post">
+		<form id="listMenuElements" method="post"
+		      tal:attributes="action string:${context/absolute_url}/@@customize-factoriesmenu">
 			<fieldset>
 				<legend i18n:translate="">Customized menu elements</legend>
 				<div class="menuDataRow">
@@ -147,7 +149,8 @@
 	</div>
 
 	<div class="menu-customization-container new-menu-element">
-		<form id="new-menu-element" action="" method="post">
+		<form id="new-menu-element" method="post"
+		      tal:attributes="action string:${context/absolute_url}/@@customize-factoriesmenu">
 			<fieldset>
 				<legend i18n:translate="">New menu element</legend>
 				<div class="menuDataRow">
