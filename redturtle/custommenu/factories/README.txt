@@ -59,7 +59,7 @@ Now test if we are arrived in a form needed to explicitly enable customization p
     >>> "Factories menu management activation" in browser.contents
     True
 
-Before beeing able to add or customize menu elements, we need to activate the feature here, in the site
+Before being able to add or customize menu elements, we need to activate the feature here, in the site
 root.
 
     >>> browser.getControl(name='enable-command').click()
@@ -73,7 +73,7 @@ but now with a nice activation message.
     True
 
 From this new form we can of course disable the customization. Be aware that this will also delete all
-customizations added to the context.
+customizations added to the context (we will see in a moment how to add customizations).
 
     >>> browser.getControl(name='disable-command').click()
     >>> browser.url == portal_url
@@ -91,8 +91,8 @@ The customization view now is empty (no customization are there).
 Adding a new element
 --------------------
 
-The simplest thing we can do is to add an alias for another existing content type. As ofter the "File"
-entity can be unfriendly (not all users see a PDF file as a File), we can create a new entry named
+The simplest thing we can do is to add an alias for another existing content type. Often the "File"
+entity can be unfriendly (not all users see a PDF as a "file"), we can create a new entry named
 "PDF Document".
 
 The idea is to keep inner Plone feature to handle PDF files (so still we will use the File content type)
@@ -107,7 +107,7 @@ Let's fill the form.
     >>> browser.getControl(name='element-tales').value = 'string:${container/absolute_url}/createObject?type_name=File'
 
 We skipped the optional *condition-tales* that can be used to control when the customized entry must
-appear in the UI.
+appear in the UI (see advanced section below).
 
 Now we can submit the form and see the result.
 
@@ -120,7 +120,7 @@ First of all we are still in the customization form.
     >>> browser.url == portal_url+'/@@customize-factoriesmenu'
     True
 
-The entry we just added is now available for be updated or deleted, in another form of the same view.
+The entry we just added is now available for being updated or deleted, in another part of the same page.
 
     >>> browser.getControl(name='element-name:list').value
     'PDF Document'
@@ -181,9 +181,12 @@ to provide both of them.
     >>> 'New entry added' in browser.contents
     True
 
-In the last example above we added a completely non-sense new element. But The menu customization feature
-heavily on the TALES expression for the URL. In the given data can't be transformed in a valid TALES
+In the last example above we added a completely non-sense new element. But the menu customization feature
+heavily rely on the TALES expression for the URL. In the given data can't be transformed in a valid TALES
 expression, the whole entry is ignored.
+
+In a similar way, in errors are put inside other optional TALES expressions, thet will be ignored or
+evaluated as *False*.
 
 So, going back to the site root we don't see any "*fake*" link available, even if the "*PDF Document*"
 ones is still there.
@@ -198,7 +201,7 @@ Removing entries
 ----------------
 
 Just for keep things clean, but obviously also for giving to users a way to remove added customization,
-the form provided has the feature to removed stored entries.
+the form provide the feature to remove stored entries.
 
 First of all, be sure that our "*fake*" element is in the form.
 
@@ -226,7 +229,7 @@ Ok, now we remove the garbage of the "*fake*" element.
 
     >>> browser.getControl('Delete?', index=1).click()
     >>> browser.getControl(name='delete-command').click()
-    >>> 'Customization/s remove' in browser.contents
+    >>> 'Customization/s removed' in browser.contents
     True
 
 Now we don't see anymore the "*fake*" entry in the form.
@@ -239,7 +242,7 @@ Modify and update existing entries
 ----------------------------------
 
 The next and last "simple" task is to modify existing entry for local menu customization.
-In the next example we keep al the data for our "*PDF Document*" but we wanna change the mandatory
+In the next example we keep all the data for our "*PDF Document*" but we wanna change the mandatory
 description.
 
     >>> browser.getControl('Element description', index=0).value
@@ -274,7 +277,7 @@ changed.
 Advanced use
 ============
 
-The customization can give us more power and new features thanks to::
+The customization can give us more power and new features thanks to:
 
  `Condition for entry`
      We can provide a condition TALES expression that will be evaluated to make an element appear or not
@@ -309,4 +312,21 @@ Let's introduce power of condition with an example. Let's say that in our "*New 
 a special kind on Event content type. But this event must be addable to our new area if and only if a
 special marker keyword is used on the area itself.
 
+First of all, this is a new context, so we need to enable local customization there.
+
+    >>> browser.getControl('Enable').click()
+    >>> 'Enabled local customizations' in browser.contents
+    True
+
+Now we can add our new entry.
+
+    >>> browser.getControl(name='element-name').value = 'Special Event'
+    >>> browser.getControl(name='condition-tales').value = "python:'Special' in container.Subject()"
+    >>> browser.getControl(name='element-tales').value = 'string:${container/absolute_url}/createObject?type_name=Event'
+    >>> browser.getControl('Add this').click()
+    >>> 'New entry added' in browser.contents
+    True
+
 xxx
+
+    
