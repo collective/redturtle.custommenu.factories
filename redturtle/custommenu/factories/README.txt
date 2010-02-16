@@ -327,6 +327,134 @@ Now we can add our new entry.
     >>> 'New entry added' in browser.contents
     True
 
-xxx
+Now we can return to the folder view.
 
-    
+    >>> browser.getLink('Return').click()
+    >>> browser.url == portal_url + '/new-area'
+    True
+
+As the condition we used check for a keyword we don't provided yet, no new entry is visible inside the
+factories menu.
+
+To see our new element, we need to add the tag "*Special*" to the folder.
+
+    >>> browser.getLink('Edit').click()
+    >>> browser.getControl(name='subject_keywords:lines').value = 'Special'
+    >>> browser.getControl('Save').click()
+    >>> 'Special' in browser.contents
+    True
+
+We supplied the right keyword, so our new element must be in the factories menu.
+
+    >>> 'Special Event' in browser.contents
+    True
+
+Before going on, we must talk a little more on variable used in the condition. As we used *container*
+instead of context we are sure that always, inside the "New area" folder, the new entry is avaiable
+(of course, when the condition pass).
+
+Use *context* here can leave to unexpected and unwanted result when the folder use a contained document as
+default view. In this case when we are on the folder the real context is the document inside.
+
+Use *container* is the best choice, so our trick continue to work even if a document is used as default
+view for the folder.
+
+    >>> browser.getLink('Page').click()
+    >>> browser.getControl('Title').value = 'The index page'
+    >>> browser.getControl('Body Text').value = '<p>Welcome to a secret area</p>'    
+    >>> browser.getControl('Save').click()
+    >>> browser.getLink('New area').click()
+    >>> browser.getLink('Select a content item as default view').click()
+    >>> browser.getControl('The index page').click()
+    >>> browser.getControl('Save').click()
+
+Now we can see that going onto the "New area" folder we see the new start page created above, but the
+factories link is still in the menu.
+
+    >>> browser.open(portal_url + '/new-area')
+    >>> 'Special Event' in browser.contents
+    True
+
+
+Multiple contexts
+-----------------
+
+Right now we worked on two different section of the site where we defined customization of the
+factories menu:
+
+* the site root
+* the "*New area*" folder
+
+Going to the site root we see only the customization defined there. If we go to the Folder defined in
+examples above, we see both customizations!
+
+    >>> browser.open(portal_url + '/new-area')
+    >>> 'Special Event' in browser.contents
+    True
+    >>> 'PDF Document' in browser.contents
+    True
+
+This because "*New area*" is a Folder inside the Plone root. But (right now) this will only happen for
+the Plone root and other containers inside it.
+This inheritance will not be repeated for a Folder (with local customization) and a subfolder inside it.
+
+Let's create a subfolder inside the current area.
+
+    >>> browser.getLink('Folder').click()
+    >>> browser.getControl('Title').value = 'Subsection'
+    >>> browser.getControl('Save').click()
+    >>> browser.url == portal_url + '/new-area/subsection/'
+    True
+
+There we only see the customization defined in the site root (again: because the site root is right now
+the only context that can spread its customization to all other contexts).
+
+    >>> 'Special Event' in browser.contents
+    False
+    >>> 'PDF Document' in browser.contents
+    True
+
+
+Use inherit checks
+------------------
+
+This part is strictly related to the multiple context section above. Right now we always ignored a checkbox
+available in every customization form: the "*Inherit*" check, that is selected by default.
+
+This check take 2 very different meaning in Plone root and in other contexts (this will underline once again
+that site root is special for us).
+
+In the site root this check will say us that customization defined there *can* be inherited in lower levels
+of the site.
+
+Disabling this doesn't change nothing in the site root context, but make all customization not available in
+all other contexts.
+
+Let's go back to root's customization form.
+
+    >>> browser.open(portal_url)
+    >>> browser.getLink('Customize menu').click()
+
+Now try to uncheck the inherit command, save and return to the site view.
+
+    >>> browser.getControl('Inherit').click()
+    >>> browser.getControl('Save changes').click()
+    >>> browser.getLink('Return').click()
+
+Nothing is changed here. The "*PDF Document*" menu entry is still there.
+
+    >>> 'PDF Document' in browser.contents
+    True
+
+But if we move now to the "*New area*" folder, we'll see a big difference.
+
+    >>> browser.getLink('New area').click()
+
+There we still see the local customization, but we don't see anymore the one defined in the site root.
+
+    >>> 'Special Event' in browser.contents
+    True
+    >>> 'PDF Document' in browser.contents
+    False
+
+xxx

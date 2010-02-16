@@ -33,6 +33,7 @@ setup(name='redturtle.custommenu.factories',
       extras_require=dict(tests=tests_require),
       test_suite = 'redturtle.custommenu.factories.tests.test_doctest.test_suite',
       entry_points="""
-      # -*- Entry points: -*-
+      [z3c.autoinclude.plugin]
+      target = plone
       """,
       )

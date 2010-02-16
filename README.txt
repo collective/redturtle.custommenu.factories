@@ -149,5 +149,5 @@ TODO
 * localization
 * javascript features for managing entries
 * code needs refactoring
-* compatibility with Plone 4
-
+* compatibility and tests with Plone 4
+* think about inherit customizations not only from portal root
