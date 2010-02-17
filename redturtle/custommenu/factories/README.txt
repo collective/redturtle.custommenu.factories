@@ -673,54 +673,46 @@ Feature described here are targeted on developers.
 We can write code that provide an additional adapter for "special" contexts. Providing a totally new adapter
 give us *a lot* of freedom for the way we can change customized menu.
 
-First of all we define a new interface that will mark our special folder.
+The most part of this example is setup outside of this document. See the test setup in
+*redturtle.custommenu.factories.tests.adapters*.
+In this file we create a new interface (subclass of the interface normally used for standard folder adapter)
+and the adapter itself.
 
-    >>> from OFS.interfaces import IFolder
-    >>> class ISpecialFolder(IFolder):
-    ...     pass
+Our new adapter does nothing special. It ignore the customization form elements and instead always return
+a single "*Hello!*" entry.
 
-Then we need a factory for our adapter that will be used for customization of the menu on folders that
-implements this interface.
-
-    >>> from zope.interface import implements, alsoProvides
-    >>> from zope.component import adapts
-    >>> from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
-    >>> from redturtle.custommenu.factories.adapters.adapters import MenuCoreAdapter
-    >>> class SpecialFolderFactoryMenuAdapter(MenuCoreAdapter):
-    ...     implements(ICustomFactoryMenuProvider)
-    ...     adapts(ISpecialFolder)
-    ...     def getMenuCustomization(self, data, results):
-    ...         return [{'title'   : 'Hello!',
-    ...                  'description' : 'Whatever data you enter, you will always see this',
-    ...                  'action'      : '',
-    ...                  'selected'    : False,
-    ...                  'icon'        : '',
-    ...                  'submenu'     : None,
-    ...                  'extra'       : {'separator': None, 'id': 'dummy', 'class': ''},
-    ...                 }]
-
-Our adapter will do nothing. Whatever kind of configuration we provide in the customization form it will
-only return a single entry in the menu, with title "Hello!".
-
-Now we need to register the adapter.
-
-    >>> from zope.app.testing import ztapi
-    >>> ztapi.provideAdapter(ISpecialFolder, ICustomFactoryMenuProvider, SpecialFolderFactoryMenuAdapter)
-
-To test this we need to create a new folder.
+To see this in action we create a new folder where to work on.
 
     >>> browser.open(portal_url)
     >>> browser.getLink('Folder').click()
     >>> browser.getControl('Title').value = "Mad folder"
     >>> browser.getControl('Save').click()
 
-Now for testing purpose we manually make this new folder to provide our interface.
+Now for testing purpose we manually make this new folder to provide our interface. Thanks to the adapter
+mechanism of Plone, our interface is seen much specific of the standard ones for folders, so our example
+adapter will take precedence.
 
     >>> self.loginAsPortalOwner()
+    >>> from redturtle.custommenu.factories.tests.adapters import ISpecialFolder
+    >>> from zope.interface import alsoProvides
     >>> mad_folder = self.portal.restrictedTraverse('mad-folder')
     >>> alsoProvides(mad_folder, ISpecialFolder)
 
-Now we must go to our folder view.
+Now we must go to our folder view just to see that no factories link available, except for our "*Hello!*".
 
     >>> browser.reload()
+    >>> bool(browser.getLink('Hello!'))
+    True
+    >>> browser.getLink('Folder')
+    Traceback (most recent call last):
+    ...
+    LinkNotFoundError
+    >>> browser.getLink('PDF Document')
+    Traceback (most recent call last):
+    ...
+    LinkNotFoundError
 
+This example must show that is possible to handle in special way different content type that implements
+some interfaces, or single contents that provides other interface.
+
+This will give us a lot of way to customize this product's behaviours.

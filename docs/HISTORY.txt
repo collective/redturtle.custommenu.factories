@@ -4,17 +4,18 @@ Changelog
 0.2.0b - (2010-??-??)
 ---------------------
 
-* Now local customizations must be enabled and disabled per-context
-* Fixes to XHTML structure and validation
-* Fixed CSS class names to be camelCase as Plone does
-* Added tests
-* Fixed templates to be test compatible
-* Fixed a bug on entry deletion
-* Added missing check on required element for entries (in facts were optional)
+* now local customizations must be enabled and disabled per-context
+* fixes to XHTML structure and validation
+* fixed CSS class names to be camelCase as Plone does
+* added tests
+* fixed templates to be test compatible
+* fixed a bug on entry deletion
+* added missing check on required element for entries (in facts were optional)
 * added egg support for z3c.autoinclude
+* now False condition for an element with id hide inherited element with same id
 
 0.1.0a - (2010-01-04)
 ---------------------
 
-* Initial release
+* initial release
 

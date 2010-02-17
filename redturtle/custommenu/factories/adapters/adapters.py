@@ -53,7 +53,8 @@ class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
                     result = compiledCondition(talEngine.getContext(data))
                 except KeyError, inst:
                     continue
-                if not result:
+                if not result and c['element-id']:
+                    newIds.append(c['element-id'])
                     continue
 
             # URL

@@ -65,6 +65,10 @@ class TestCase(ptc.PloneTestCase):
     applies to unit test cases.
     """
 
+from OFS.interfaces import IFolder
+class ISpecialFolder(IFolder):
+    pass
+
 class FunctionalTestCase(ptc.FunctionalTestCase):
     """We use this class for functional integration tests that use
     doctest syntax. Again, we can put basic common utility or setup
