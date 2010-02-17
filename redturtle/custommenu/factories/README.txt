@@ -185,8 +185,8 @@ In the last example above we added a completely non-sense new element. But the m
 heavily rely on the TALES expression for the URL. In the given data can't be transformed in a valid TALES
 expression, the whole entry is ignored.
 
-In a similar way, in errors are put inside other optional TALES expressions, thet will be ignored or
-evaluated as *False*.
+In a similar way, if errors are put inside other optional TALES expressions, they will be ignored
+(**not** evaluated to False).
 
 So, going back to the site root we don't see any "*fake*" link available, even if the "*PDF Document*"
 ones is still there.
@@ -350,7 +350,7 @@ We supplied the right keyword, so our new element must be in the factories menu.
     True
 
 Before going on, we must talk a little more on variable used in the condition. As we used *container*
-instead of context we are sure that always, inside the "New area" folder, the new entry is avaiable
+instead of context we are sure that always, inside the "New area" folder, the new entry is available
 (of course, when the condition pass).
 
 Use *context* here can leave to unexpected and unwanted result when the folder use a contained document as
@@ -523,8 +523,8 @@ Default entries have also ids.
 Then came the magic! As we like valid XHTML we don't want to have duplicate id in the same page, so the
 customized menu will not show you two entries with the same id: only ones will be shown.
 
-We use this also to reach another feature because the customized id has wins on inherit ones, this is true
-for standard or already customized (but inherited from the site root) elements.
+We use this also to reach another feature because the customized id wins on inherit ones, this is true
+for standard or already customized (and inherited from the site root) elements.
 
 In the last example we seen that the link for creating a new Image has an id. Let's go back to our
 subsection folder.
@@ -543,7 +543,7 @@ to enable local customizations.
     >>> browser.getControl('Enable').click()
 
 Now we are free to add a new customization there. For this example we will repeat what we did for the
-PDF document, and add a new "Photo" entry.
+PDF document, and add a new "*Photo*" entry.
 
     >>> browser.getControl(name='element-name').value = 'Photo'
     >>> browser.getControl(name='icon-tales').value = 'string:$portal_url/image_icon.gif'
@@ -554,8 +554,9 @@ Now we can go back to the folder view and see the result.
 
     >>> browser.getLink('Return').click()
 
-Ok, now say that in this folder we don't want to add Image content type but only Photo (we know that they are
-the same, but think as a final user).
+Nothing new right now.
+Now let's say that in this folder we don't want to add Image content type but only Photo (we know that
+they are the same, but think as a final user).
 
 We can reach this in 3 ways:
 
@@ -566,7 +567,8 @@ We can reach this in 3 ways:
   condition.
 
 The third choice is silly (but possible). However we want to focus on the second choice.
-Giving to Photo the same id used by Image will automatically make Image entry invisible in this context.
+Giving to Photo the same id used by Image will automatically make Image entry invisible in this context
+(because Image is inherited from root).
 
     >>> browser.getLink('Customize menu').click()
     >>> browser.getControl('Element id', index=0).value = 'image'
@@ -599,15 +601,17 @@ Now the Image is back in the menu, and Photo disappeared.
     ...
     LinkNotFoundError
 
-This is obviously a stupid example, but this can show some possibility, like a way to change some less
-important data of the menu element (like: you can change only image icon for an entry in a context).
+This is obviously a stupid example for now, but this can show some possibility, like a way to change
+some less important data of the menu element (you can, for example, change only image icon for an entry
+in a context).
 
-Another big behaviour is to give us the power to conditionally give or not a content type to users.
+Another *big feature* is to give us the power to conditionally give or not a content type to users
+(default or customized ones).
 
-For example: now we are replacing the base Plone Image content type with a new one (that give the same)
-features, but we want to make this content addable in that folder only when it is published.
+For example: now we are replacing the base Plone Image content type with a new one (that give the same
+features) but we want to make this content addable in that folder only when it is *published*.
 
-*Note: this is only an example... playing with review state of objects is task of workflow used*.
+*Note: this is only an example... playing with review state of objects is a task for workflow*.
 
     >>> browser.getLink('Customize menu').click()
     >>> browser.getControl('TALES condition',
@@ -621,4 +625,102 @@ Now, as far as the condition is False, we don't see any Image in the menu (in th
     Traceback (most recent call last):
     ...
     LinkNotFoundError
+
+So, even if the condition is False, the customization is still done. The local defined Image keep
+precedence onto the Plone ones.
+
+Now we need to test if the customized Image will be shown when condition because True. We only need to
+publish the folder.
+
+    >>> browser.getLink('Publish').click()
+    >>> bool(browser.getLink('Image'))
+    True
+
+Last example: show that we can customize also non standards entries, like our "*PDF Document*". For this
+example we will define a new PDF option in the "*Subsection*" area.
+The "new" version of the PDF entry have only a different description.
+
+    >>> browser.getLink('Customize menu').click()
+    >>> browser.getControl('Element id', index=1).value = 'pdf-file'
+    >>> browser.getControl('Element name', index=1).value = 'PDF Document'
+    >>> browser.getControl('Element description', index=1).value = 'Another boring PDF version'
+    >>> browser.getControl('TALES icon', index=1).value = 'string:$portal_url/pdf_icon.gif'
+    >>> browser.getControl('TALES expression for URL',
+    ...                     index=1).value = 'string:${container/absolute_url}/createObject?type_name=File'
+    >>> browser.getControl("Add this").click()
+    >>> browser.getLink('Return').click()
+
+Now we need to test if we have only the new version of our PDF in the folder factories menu
+
+    >>> 'Another boring PDF version' in browser.contents
+    True
+    >>> 'A PDF document (ok, this is again a File content)' in browser.contents
+    False
+
+
+Very advanced features
+======================
+
+How the product handle customization for contents is given by *adapters*. For example we have two standard
+adapters, one for general folderish contents and another for Plone sites.
+Those adapters provide the *ICustomFactoryMenuProvider*.
+
+Those different adapters are the actor that make the inheritance working in a different way in site root or
+everywhere else.
+
+Feature described here are targeted on developers.
+
+We can write code that provide an additional adapter for "special" contexts. Providing a totally new adapter
+give us *a lot* of freedom for the way we can change customized menu.
+
+First of all we define a new interface that will mark our special folder.
+
+    >>> from OFS.interfaces import IFolder
+    >>> class ISpecialFolder(IFolder):
+    ...     pass
+
+Then we need a factory for our adapter that will be used for customization of the menu on folders that
+implements this interface.
+
+    >>> from zope.interface import implements, alsoProvides
+    >>> from zope.component import adapts
+    >>> from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
+    >>> from redturtle.custommenu.factories.adapters.adapters import MenuCoreAdapter
+    >>> class SpecialFolderFactoryMenuAdapter(MenuCoreAdapter):
+    ...     implements(ICustomFactoryMenuProvider)
+    ...     adapts(ISpecialFolder)
+    ...     def getMenuCustomization(self, data, results):
+    ...         return [{'title'   : 'Hello!',
+    ...                  'description' : 'Whatever data you enter, you will always see this',
+    ...                  'action'      : '',
+    ...                  'selected'    : False,
+    ...                  'icon'        : '',
+    ...                  'submenu'     : None,
+    ...                  'extra'       : {'separator': None, 'id': 'dummy', 'class': ''},
+    ...                 }]
+
+Our adapter will do nothing. Whatever kind of configuration we provide in the customization form it will
+only return a single entry in the menu, with title "Hello!".
+
+Now we need to register the adapter.
+
+    >>> from zope.app.testing import ztapi
+    >>> ztapi.provideAdapter(ISpecialFolder, ICustomFactoryMenuProvider, SpecialFolderFactoryMenuAdapter)
+
+To test this we need to create a new folder.
+
+    >>> browser.open(portal_url)
+    >>> browser.getLink('Folder').click()
+    >>> browser.getControl('Title').value = "Mad folder"
+    >>> browser.getControl('Save').click()
+
+Now for testing purpose we manually make this new folder to provide our interface.
+
+    >>> self.loginAsPortalOwner()
+    >>> mad_folder = self.portal.restrictedTraverse('mad-folder')
+    >>> alsoProvides(mad_folder, ISpecialFolder)
+
+Now we must go to our folder view.
+
+    >>> browser.reload()
 
