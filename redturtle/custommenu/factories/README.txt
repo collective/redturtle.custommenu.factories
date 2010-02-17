@@ -457,4 +457,168 @@ There we still see the local customization, but we don't see anymore the one def
     >>> 'PDF Document' in browser.contents
     False
 
-xxx
+This feature is given for all usecases where the customization of the menu is needed only in the site root,
+just because only there we need some additional menu elements.
+
+The inherit check in all other contexts has a different meaning. Like said before the check in the Plone
+root tell that customizations *can* be inherited but the check in the other contexts tell us if root's
+customizations *must* be inherited.
+
+To test this we need to enable again the check in the site root.
+
+    >>> browser.open(portal_url)
+    >>> browser.getLink('Customize menu').click()
+    >>> browser.getControl('Inherit').click()
+    >>> browser.getControl('Save changes').click()
+    >>> browser.getLink('Return').click()
+
+Ok, now we will change the inherit check on the "*New area*" folder.
+
+    >>> browser.getLink('New area').click()
+    >>> browser.getLink('Customize menu').click()
+    >>> browser.getControl('Inherit').click()
+    >>> browser.getControl('Save changes').click()
+    >>> browser.getLink('Return').click()
+    >>> browser.url == portal_url + '/new-area'
+    True
+
+The result is the same as before.
+
+    >>> 'Special Event' in browser.contents
+    True
+    >>> 'PDF Document' in browser.contents
+    False
+
+But there is a big difference: now is the current context that say "I don't wanna see root's
+customizations".
+
+No, go to the subsection.
+
+    >>> browser.getLink('Subsection').click()
+
+There the inheritance block of the upper folder has no effect. We still see there the customization
+defined in the site root.
+
+    >>> 'PDF Document' in browser.contents
+    True
+
+
+Using id for override
+---------------------
+
+In all examples above we used or skipped the "*Element id*" data for customization without giving it
+too much consideration.
+
+It's primary task is to render and HTML id attribute to the link in the menu.
+
+    >>> browser.open(portal_url)
+    >>> browser.getLink('PDF Document').attrs['id'] == 'pdf-file'
+    True
+
+Default entries have also ids.
+
+    >>> browser.getLink('Image').attrs['id'] == 'image'
+    True
+
+Then came the magic! As we like valid XHTML we don't want to have duplicate id in the same page, so the
+customized menu will not show you two entries with the same id: only ones will be shown.
+
+We use this also to reach another feature because the customized id has wins on inherit ones, this is true
+for standard or already customized (but inherited from the site root) elements.
+
+In the last example we seen that the link for creating a new Image has an id. Let's go back to our
+subsection folder.
+
+    >>> browser.open(portal_url+'/new-area/subsection')
+
+The link for creating Image is there as in Plone normal behaviour.
+
+    >>> browser.getLink('Image').attrs['id'] == 'image'
+    True
+
+Now we add local customization in this folder. Since is the first time we customize this folder, we need
+to enable local customizations.
+
+    >>> browser.getLink('Customize menu').click()
+    >>> browser.getControl('Enable').click()
+
+Now we are free to add a new customization there. For this example we will repeat what we did for the
+PDF document, and add a new "Photo" entry.
+
+    >>> browser.getControl(name='element-name').value = 'Photo'
+    >>> browser.getControl(name='icon-tales').value = 'string:$portal_url/image_icon.gif'
+    >>> browser.getControl(name='element-tales').value = 'string:${container/absolute_url}/createObject?type_name=Image'
+    >>> browser.getControl("Add this").click()
+
+Now we can go back to the folder view and see the result.
+
+    >>> browser.getLink('Return').click()
+
+Ok, now say that in this folder we don't want to add Image content type but only Photo (we know that they are
+the same, but think as a final user).
+
+We can reach this in 3 ways:
+
+* Use basic Plone features, and access the "Restrictions..." option inside the factories menu, to disable
+  Image there.
+* Give to our Photo entry the same id that Image has.
+* Create an additional customization entry for Image, keeping the same id of Image with an always false
+  condition.
+
+The third choice is silly (but possible). However we want to focus on the second choice.
+Giving to Photo the same id used by Image will automatically make Image entry invisible in this context.
+
+    >>> browser.getLink('Customize menu').click()
+    >>> browser.getControl('Element id', index=0).value = 'image'
+    >>> browser.getControl("Save changes").click()
+    >>> browser.getLink('Return').click()
+
+So, now we have no "*Image*" option available, but "*Photo*" is still there.
+
+    >>> browser.getLink('Image')
+    Traceback (most recent call last):
+    ...
+    LinkNotFoundError
+    >>> 'Photo' in browser.contents
+    True
+
+Right now we always defined new fake entries, to give users the feeling that new content type are present
+in the factories menu. But we can also replace an entry with the same content type.
+
+    >>> browser.getLink('Customize menu').click()
+    >>> browser.getControl('Element name', index=0).value = 'Image'
+    >>> browser.getControl("Save changes").click()
+    >>> browser.getLink('Return').click()
+
+Now the Image is back in the menu, and Photo disappeared.
+
+    >>> bool(browser.getLink('Image'))
+    True
+    >>> browser.getLink('Photo')
+    Traceback (most recent call last):
+    ...
+    LinkNotFoundError
+
+This is obviously a stupid example, but this can show some possibility, like a way to change some less
+important data of the menu element (like: you can change only image icon for an entry in a context).
+
+Another big behaviour is to give us the power to conditionally give or not a content type to users.
+
+For example: now we are replacing the base Plone Image content type with a new one (that give the same)
+features, but we want to make this content addable in that folder only when it is published.
+
+*Note: this is only an example... playing with review state of objects is task of workflow used*.
+
+    >>> browser.getLink('Customize menu').click()
+    >>> browser.getControl('TALES condition',
+    ...                    index=0).value = "python:container.portal_workflow.getInfoFor(container, 'review_state')=='published'"
+    >>> browser.getControl("Save changes").click()
+    >>> browser.getLink('Return').click()
+
+Now, as far as the condition is False, we don't see any Image in the menu (in this context).
+
+    >>> browser.getLink('Image')
+    Traceback (most recent call last):
+    ...
+    LinkNotFoundError
+
