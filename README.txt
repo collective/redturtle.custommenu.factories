@@ -7,7 +7,7 @@ from the Plone available content types.
 This is designed for avoiding useless content types but, at the same time, help UI experience of
 non-technical users.
 
-This product has been tested on **Plone 3.3**.
+This product has been tested on **Plone 3.3** and **Plone 4**.
 
 You can use this to add new non-standard stuff to the menu (like Javascript links). See below.
 
@@ -149,5 +149,4 @@ TODO
 * localization
 * javascript features for managing entries
 * code needs refactoring
-* compatibility and tests with Plone 4
 * think about inherit customizations not only from portal root

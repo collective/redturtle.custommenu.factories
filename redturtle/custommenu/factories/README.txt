@@ -17,9 +17,10 @@ Ok, now we are ready to load the Plone site where this product is installed.
 Our first test is to see that the "Customize menu..." element of the factories menu can't be used
 from normal users.
 
+    >>> browser.getLink('Log in').click()
     >>> browser.getControl(name='__ac_name').value = 'contributor'
     >>> browser.getControl(name='__ac_password').value = 'secret'
-    >>> browser.getControl(name='submit').click()
+    >>> browser.getControl('Log in').click()
     >>> "You are now logged in" in browser.contents
     True
 
@@ -28,7 +29,7 @@ type (like a "News Item") but can't see the new command.
 
     >>> browser.getLink('News Item').text
     '[IMG] News Item'
-    >>> "Customize menu\xe2\x80\xa6" in browser.contents
+    >>> "Customize menu" in browser.contents
     False
 
 Again, the contributor user can't go directly to the customization form if he know the URL.
@@ -37,22 +38,23 @@ Again, the contributor user can't go directly to the customization form if he kn
     >>> "You do not have sufficient privileges to view this page" in browser.contents
     True
 
-Only Manager (or role that behave the "*Customize menu: factories*" permission) can access the
-customization feature.
+Only Manager (or role that behave the "*Customize menu: factories*" permission) can access the customization
+form.
 
     >>> browser.getLink('Log out').click()
-    >>> browser.open(portal_url)
+    >>> browser.open(portal_url+'/login_form') # silly, but needed for Plone 4 tests
     >>> browser.getControl(name='__ac_name').value = portal_owner
     >>> browser.getControl(name='__ac_password').value = default_password
-    >>> browser.getControl(name='submit').click()
+    >>> browser.getControl('Log in').click()
     >>> "You are now logged in" in browser.contents
     True
 
-Now the "Customize menu" link must the there.
+Now the "Customize menu" link must be available when on homepage.
 
-    >>> "Customize menu\xe2\x80\xa6" in browser.contents
+    >>> browser.open(portal_url)
+    >>> "Customize menu" in browser.contents
     True
-    >>> browser.getLink('Customize menu\xe2\x80\xa6').click()
+    >>> browser.getLink('Customize menu').click()
 
 Now test if we are arrived in a form needed to explicitly enable customization per-context.
 
@@ -700,7 +702,7 @@ adapter will take precedence.
 
 Now we must go to our folder view just to see that no factories link available, except for our "*Hello!*".
 
-    >>> browser.reload()
+    >>> browser.getLink('Mad folder').click() # for some reason browser.reload() here breakes Plone 4 tests
     >>> bool(browser.getLink('Hello!'))
     True
     >>> browser.getLink('Folder')
