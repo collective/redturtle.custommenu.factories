@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2.0b - (2010-??-??)
+0.2.0b - (2010-02-17)
 ---------------------
 
 * now local customizations must be enabled and disabled per-context

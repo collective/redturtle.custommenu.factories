@@ -25,7 +25,7 @@ __ http://pypi.python.org/pypi/collective.flowplayer
 So the editor (that is *never* a developer in real life... you must accept it) must know that when he add
 a new file, it magically became a video... This is not so simple to understand; also is impossible to
 understand it without a training or by past experience.
-Will not be better if the user can read "*Add new video*" in the menu instead?
+Can't be better if the user could read "*Add new video*" in the menu instead?
 
 Right now the best usability choice is to add a new content type to the menu, or develop a new helper portlet
 that show some links like "*add a new video here*".
@@ -34,7 +34,7 @@ In the first case, just copy/paste the original used content if enough (copy/pas
 rename it in something like "Video").
 But you know... we don't really need those new content types.
 
-In the second case all is ok, but all that Plone users know is to look at the right menu to search for addable
+In the second case all is ok, but what Plone users know is to look at the right menu to search for addable
 types, not to look in a menu and *also* in another place.
 
 So:
@@ -142,6 +142,12 @@ In the TALES expression above, you can use those variables:
      useful when writing expression that keep in mind the default document in a folder.
  `portal_url`
      The *portal_url* tool, taken from the Plone site.
+
+Examples and advanced features
+------------------------------
+
+Take a look to the README.txt file included to see some examples and to discover what this products can
+do in your Plone site.
 
 TODO
 ====
