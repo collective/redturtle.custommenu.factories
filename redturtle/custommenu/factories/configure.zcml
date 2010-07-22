@@ -12,7 +12,8 @@
 
   <include package=".adapters" />
   <include package=".browser" />
-  
+  <include package=".exportimport" />
+
   <include file="profiles.zcml" />
 
 </configure>
