@@ -13,7 +13,7 @@ from OFS.interfaces import IFolder
 
 from redturtle.custommenu.factories import custommenuMessageFactory as _
 from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
-from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
+from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider, ICustomMenuFactoryLayer
 
 class FactoriesMenu(PloneFactoriesMenu):
     implements(IFactoriesMenu)
@@ -26,9 +26,14 @@ class FactoriesMenu(PloneFactoriesMenu):
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
         results = PloneFactoriesMenu.getMenuItems(self, context, request)
+
+        # No menu customization if the product is not installed
+        if not ICustomMenuFactoryLayer.providedBy(request):
+            return results
+        
         portal_url = getToolByName(context, 'portal_url')
 
-        # First of all, get the real context on the menu
+        # First of all, get the real context of the menu
         if IFolder.providedBy(context):
             folder = context
         elif self.isFolderOrFolderDefaultPage(context, request):

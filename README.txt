@@ -60,7 +60,7 @@ How to use
 Installation
 ------------
 
-Simply add the egg to your buildout, and re-run it. Remember to add also the ZCML overrides.
+Simply add the egg to your buildout, and re-run it.
 
 ::
 
@@ -70,12 +70,8 @@ Simply add the egg to your buildout, and re-run it. Remember to add also the ZCM
         ...
         redturtle.custommenu.factories
     ...
-    
-    zcml =
-        ...
-        redturtle.custommenu.factories
-        redturtle.custommenu.factories-overrides
-    ...
+
+Remember to add also the ZCML slug and overrides if you are testing this on Plone 3.2 or lesser.
 
 After this, install the new product in Plone.
 
@@ -156,3 +152,5 @@ TODO
 * javascript features for managing entries
 * code needs refactoring
 * think about inherit customizations not only from portal root
+* subsites testing needed
+

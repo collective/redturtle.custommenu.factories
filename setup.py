@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.2.0b'
+version = '0.3.0'
 
 tests_require=['zope.testing']
 
@@ -19,7 +19,7 @@ setup(name='redturtle.custommenu.factories',
       keywords='plone menu factories customize',
       author='RedTurtle Technology',
       author_email='luca.fabbri@redturtle.net',
-      url='http://svn.plone.org/svn/collective/redturtle.custommenu.factories',
+      url='http://plone.org/products/redturtle.custommenu.factories',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['redturtle', 'redturtle.custommenu'],

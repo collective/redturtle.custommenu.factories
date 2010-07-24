@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from zope.interface import implements
+from zope.component import ComponentLookupError
 from Products.CMFCore.utils import getToolByName
 from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
 from redturtle.custommenu.factories import custommenuMessageFactory as _
@@ -40,7 +41,10 @@ class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
         """
         context = self.context
         talEngine = Expressions.getEngine()
-        view = getMultiAdapter((context, context.REQUEST), name=u'customize-factoriesmenu')
+        try:
+            view = getMultiAdapter((context, context.REQUEST), name=u'customize-factoriesmenu')
+        except ComponentLookupError:
+            return results
 
         newResults = []
         newIds = []
@@ -95,7 +99,10 @@ class FolderFactoryMenuAdapter(PloneSiteFactoryMenuAdapter):
         """
         context = self.context
         portal = getToolByName(context, 'portal_url').getPortalObject()
-        viewOnPortal = getMultiAdapter((portal, context.REQUEST), name=u'customize-factoriesmenu')
+        try:
+            viewOnPortal = getMultiAdapter((portal, context.REQUEST), name=u'customize-factoriesmenu')
+        except ComponentLookupError:
+            return results
         view = getMultiAdapter((context, context.REQUEST), name=u'customize-factoriesmenu')
         if viewOnPortal.inherit and view.inherit:
             siteResults = ICustomFactoryMenuProvider(portal).getMenuCustomization(data, results)

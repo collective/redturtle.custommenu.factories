@@ -8,16 +8,19 @@
       class=".view.CustomizeFactoriesMenu"
       permission="redturtle.custommenu.factories.Manage"
       allowed_attributes="getSavedCustomizations"
+      layer="..interfaces.ICustomMenuFactoryLayer"
       />
 
   <browser:resource
         name="rt_manageform.js"
         file="rt_manageform.js"
+        layer="..interfaces.ICustomMenuFactoryLayer"
         />
 
   <browser:resource
         name="rt_manageform.css"
         file="rt_manageform.css"
+        layer="..interfaces.ICustomMenuFactoryLayer"
         />
 
 

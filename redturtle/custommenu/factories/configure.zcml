@@ -4,6 +4,8 @@
     i18n_domain="redturtle.custommenu.factories">
 
   <five:registerPackage package="." initialize=".initialize" />
+  
+  <include package="plone.browserlayer" />
 
   <permission
       id="redturtle.custommenu.factories.Manage"

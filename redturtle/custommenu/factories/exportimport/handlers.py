@@ -34,7 +34,7 @@ from redturtle.custommenu.factories.exportimport.interfaces import \
 # it to be used in views and other places where is necessary
 # access and manipulate the annotations.
 class CustomMenuFactoriesAssignment(object):
-    """Custom menu factories suport
+    """Custom menu factories support
     """
     implements(ICustomMenuFactoriesAssignment)
     adapts(Interface)
