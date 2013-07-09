@@ -8,17 +8,19 @@ tests_require=['zope.testing']
 setup(name='redturtle.custommenu.factories',
       version=version,
       description="Customize the Plone \"add portal content\" menu",
-      long_description=open("README.txt").read() + "\n" +
+      long_description=open("README.rst").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Framework :: Plone",
+        "Framework :: Plone :: 3.3",
+        "Framework :: Plone :: 4.0",
         "Programming Language :: Python",
         "Development Status :: 4 - Beta",
         ],
       keywords='plone menu factories customize',
-      author='RedTurtle Technology',
-      author_email='luca.fabbri@redturtle.net',
+      author='keul',
+      author_email='luca@keul.it',
       url='http://plone.org/products/redturtle.custommenu.factories',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
