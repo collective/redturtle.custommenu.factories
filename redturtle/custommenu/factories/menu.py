@@ -105,6 +105,7 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
 
     @property
     def icon(self):
+        # BBB: deprecated from Plone 4.0
         custom_menu_results = self.getCustomMenuResults()
         if custom_menu_results:
             return custom_menu_results.get('icon')        

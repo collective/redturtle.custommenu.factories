@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import sys
+
 from zope.interface import implements
 from zope.component import ComponentLookupError
 from Products.CMFCore.utils import getToolByName
@@ -12,6 +14,10 @@ from zope.tales.tales import CompilerError
 
 from zope.component import getMultiAdapter
 
+if sys.version_info < (2, 6):
+    PLONE4 = False
+else:
+    PLONE4 = True
 
 class MenuCoreAdapter(object):
 
@@ -26,7 +32,9 @@ class MenuCoreAdapter(object):
                 'selected'    : False,
                 'icon'        : icon,
                 'submenu'     : None,
-                'extra'       : {'separator': None, 'id': customization['element-id'], 'class': ''},
+                'extra'       : {'separator': None,
+                                 'id': customization['element-id'],
+                                 'class': PLONE4 and 'contenttype-%s' % customization['element-id'] or ''},
                 }
 
     def getMenuCustomization(self, data, results):
