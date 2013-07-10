@@ -1,13 +1,12 @@
 Summary
 =======
+.. contents::
 
 This product make possible the customization of the Plone "*Add new...*" menu, commonly filled
 from the Plone available content types.
 
 This is designed for avoiding useless content types but, at the same time, help UI experience of
 non-technical users.
-
-This product has been tested on **Plone 3.3** and **Plone 4**.
 
 You can use this to add new non-standard stuff to the menu (like JavaScript links). See below.
 
@@ -52,7 +51,8 @@ Going back to the video example:
 
 This products is designed only for this or similar usability issues, however can help you to customize
 existing elements of the menu on context (for example: the action of adding a new "News Item" content in
-a folder can be customized to be an alias for another content type, but only for this special folder)
+a folder can be customized to be an alias for another content type, but only for this special folder,
+or you can disable with a falsy espression a content type in a folder, ...).
 
 How to use
 ==========
@@ -85,29 +85,26 @@ After this you can use the a customization form where you can manage local menu 
 .. figure:: http://keul.it/images/plone/redturtle.customizemenu.factories1.png
    :align: left
 
-The used *context* is always the *container* where you can find the context, or the context itself if it's
-a container.
+For every new entry you can/must fill this informations:
 
-for every new entry you can/must fill this informations:
-
- `id`
-     Enter here a string to be used to add an HTML id attribute to the new element. You can not provide
-     it, but if you use an already existing ids, the new one will override the old.
-     In this way you can *replace* one of the native (or inherited) menu entry with a new ones.
- `name`
-     Required.
-     Provide the string to be used for displaying the new element.
- `description`
-     The description is used to provide a tooltips hovering the element.
- `icon`
-     A TALES expression that can be used to give an icon to the new element (very common).
- `condition`
-     A TALES condition expression. If not provided, the new element is added to the menu. In provided
-     it is evaluated as True or False, so the element is displayed or not.
- `URL`
-     Required.
-     A TALES expression used to render the HREF attribute on the link in the element. You have total freedom
-     here: you can also render a string as "*javascript:...*" to provide some Javascript features.
+`id`
+    Enter here a string to be used to add an HTML id attribute to the new element. You can not provide
+    it, but if you use an already existing ids, the new one will override the old.
+    In this way you can *replace* one of the native (or inherited) menu entry with a new ones.
+`name`
+    Required.
+    Provide the string to be used for displaying the new element.
+`description`
+    The description is used to provide a tooltips hovering the element.
+`icon`
+    A TALES expression that can be used to give an icon to the new element (very common).
+`condition`
+    A TALES condition expression. If not provided, the new element is added to the menu. In provided
+    it is evaluated as True or False, so the element is displayed or not.
+`URL`
+    Required.
+    A TALES expression used to render the HREF attribute on the link in the element. You have total freedom
+    here: you can also render a string as "*javascript:...*" to provide some Javascript features.
 
 Also you can inherit the customization done in the site root everywhere in the site, adding this to all
 other customizations. You can also locally block the inherit of root customization but you can also make
@@ -131,6 +128,53 @@ In the TALES expression above, you can use those variables:
      useful when writing expression that keep in mind the default document in a folder.
  `portal_url`
      The *portal_url* tool, taken from the Plone site.
+
+Generic setup support
+---------------------
+
+Juan. [nueces] provided Generic Setup support for this package:
+
+.. code:: ini
+
+    <?xml version="1.0"?>
+    <object>
+      <property name="inherit">True</property>
+      <custommenu>
+        <property name="element-id">pdf-file</property>
+        <property name="element-name">PDF Document</property>
+        <property name="element-descr">A file content to be filled with a PDF document</property>
+        <property name="icon-tales">string:$portal_url/pdf_icon.gif</property>
+        <property name="condition-tales"></property>
+        <property name="element-tales">string:${container/absolute_url}/createObject?type_name=File</property>
+      </custommenu>
+      <custommenu>
+          ...
+      </custommenu>
+      <object name="documents">
+        <property name="inherit">True</property>
+        <custommenu>
+            ...
+        </custommenu>
+        <object name="ebooks">
+           <property name="inherit">True</property>
+           <custommenu>
+                ...
+           </custommenu>
+           ...
+        </object>
+        ...
+      </object>
+      ...
+    <object>
+
+For a complete code check `collective.examples.custommenufactories`__.
+
+__ http://svn.plone.org/svn/collective/collective.examples.custommenufactories/trunk/
+
+Dependencies
+============
+
+All Plone versions from 3.3 to 4.3 has been tested.
 
 TODO
 ====

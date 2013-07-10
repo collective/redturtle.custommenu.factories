@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.3.0 - (Unreleased)
---------------------
+0.3.0 (2013-07-10)
+------------------
 
 * provided Generic Setup support [nueces]
 * now can't no-more manage menu without installing the product [keul]
