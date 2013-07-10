@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-07-10 13:18+0000\n"
+"POT-Creation-Date: 2013-07-10 16:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,6 +76,10 @@ msgstr ""
 msgid "Enabled local customizations"
 msgstr ""
 
+#: ../browser/enabled.pt:16
+msgid "Factories menu management activation"
+msgstr ""
+
 msgid "Hide, enhance, change elements inside the content creation menu"
 msgstr ""
 
@@ -85,6 +89,10 @@ msgstr ""
 
 #: ../browser/view.py:45
 msgid "Local customizations disabled"
+msgstr ""
+
+#: ../browser/view.pt:16
+msgid "Manage factories menu"
 msgstr ""
 
 #: ../browser/view.py:79

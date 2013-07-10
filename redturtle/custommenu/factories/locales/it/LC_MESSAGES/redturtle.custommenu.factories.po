@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-07-10 13:18+0000\n"
+"POT-Creation-Date: 2013-07-10 16:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,6 +76,10 @@ msgstr "Abilita personalizzazioni di menù qui"
 msgid "Enabled local customizations"
 msgstr "Abilita personalizzazioni locali"
 
+#: ../browser/enabled.pt:16
+msgid "Factories menu management activation"
+msgstr "Attivazione personalizzazione menù di creazione"
+
 msgid "Hide, enhance, change elements inside the content creation menu"
 msgstr "Nascondi, estendi, modifica elementi dentro al menù di creazione tipi"
 
@@ -86,6 +90,10 @@ msgstr "Eredita"
 #: ../browser/view.py:45
 msgid "Local customizations disabled"
 msgstr "Personalizzazioni locali disabilitate"
+
+#: ../browser/view.pt:16
+msgid "Manage factories menu"
+msgstr "Gestione menù di creazione"
 
 #: ../browser/view.py:79
 msgid "New entry added"

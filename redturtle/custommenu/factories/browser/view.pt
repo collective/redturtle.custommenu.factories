@@ -13,7 +13,7 @@
 
 <div id="customize-area" class="menumanage">
 
-	<h1 class="documentFirstHeading">
+	<h1 class="documentFirstHeading" i18n:translate="">
     		Manage factories menu
 	</h1>
 
