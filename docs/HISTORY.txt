@@ -6,7 +6,11 @@ Changelog
 
 * provided Generic Setup support [nueces]
 * now can't no-more manage menu without installing the product [keul]
-* no more global env JavaScript functions [keul] 
+* disabled useless JavaScript [keul]
+* now works also with single entry menu (close `#1`__) [keul]
+* now supporting Plone 4 style icons [keul]
+
+  __ https://github.com/keul/redturtle.custommenu.factories/issues/1
 
 0.2.0b - (2010-02-17)
 ---------------------
