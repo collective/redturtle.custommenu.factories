@@ -3,7 +3,7 @@ import os
 
 version = '0.3.0'
 
-tests_require=['zope.testing']
+tests_require=['zope.testing', 'Products.PloneTestCase']
 
 setup(name='redturtle.custommenu.factories',
       version=version,
@@ -15,6 +15,9 @@ setup(name='redturtle.custommenu.factories',
         "Framework :: Plone",
         "Framework :: Plone :: 3.3",
         "Framework :: Plone :: 4.0",
+        "Framework :: Plone :: 4.1",
+        "Framework :: Plone :: 4.2",
+        "Framework :: Plone :: 4.3",
         "Programming Language :: Python",
         "Development Status :: 4 - Beta",
         ],

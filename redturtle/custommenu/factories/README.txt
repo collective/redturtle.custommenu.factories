@@ -6,7 +6,7 @@ We need to setup something before this file can became a real and working browse
     
     >>> from Products.Five.testbrowser import Browser
     >>> browser = Browser()
-    >>> #browser.handleErrors = False
+    >>> browser.handleErrors = False
     >>> portal_url = self.portal.absolute_url()
     >>> self.portal.error_log._ignored_exceptions = ('NotFound', 'Redirect', 'Unauthorized')
     >>> from Products.PloneTestCase.setup import portal_owner, default_password
@@ -21,28 +21,29 @@ from normal users.
     >>> browser.getLink('Log in').click()
     >>> browser.getControl(name='__ac_name').value = 'contributor'
     >>> browser.getControl(name='__ac_password').value = 'secret'
-    >>> browser.getControl('Log in').click()
+    >>> browser.getControl(name='submit').click()
     >>> "You are now logged in" in browser.contents
     True
 
 So the link to access the customization can't be in the current page. A Contributor can add a new content
 type (like a "News Item") but can't see the new command.
 
-    >>> browser.getLink('News Item').text
-    '[IMG] News Item'
+    >>> browser.getLink('News Item').text.endswith('News Item')
+    True
     >>> "Customize menu" in browser.contents
     False
 
 Again, the contributor user can't go directly to the customization form if he know the URL.
 
     >>> browser.open(portal_url + "/@@customize-factoriesmenu")
-    >>> "You do not have sufficient privileges to view this page" in browser.contents
-    True
+    Traceback (most recent call last):
+    ...
+    Unauthorized: You are not authorized to access this resource.
 
 Only Manager (or role that behave the "*Customize menu: factories*" permission) can access the customization
 form.
 
-    >>> browser.getLink('Log out').click()
+    >>> browser.open(portal_url+'/logout')
     >>> browser.open(portal_url+'/login_form') # silly, but needed for Plone 4 tests
     >>> browser.getControl(name='__ac_name').value = portal_owner
     >>> browser.getControl(name='__ac_password').value = default_password
@@ -146,7 +147,7 @@ But for the user, the real interesting thing is the "new" content type. Click on
 will lead us to add a normal Plone File content.
 
     >>> browser.getLink('PDF Document').click()
-    >>> 'An external file uploaded to the site.' in browser.contents
+    >>> browser.url.startswith(portal_url + '/portal_factory/File/file.')
     True
 
 When adding new element, some entry data (name and TALES expression for the URL) are required. We are forced
