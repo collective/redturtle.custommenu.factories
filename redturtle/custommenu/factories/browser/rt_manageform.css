@@ -23,3 +23,7 @@
 	padding: 1em;
 	border: 1px solid #8CACBB;
 }
+
+#content #listMenuElements ul {
+	list-style-type: none;
+} 
