@@ -5,12 +5,17 @@
 
   <five:registerPackage package="." initialize=".initialize" />
   
-  <include package="plone.browserlayer" />
+  <include package="plone.app.contentmenu" />
 
   <permission
       id="redturtle.custommenu.factories.Manage"
       title="Customize menu: factories"
      />
+
+  <adapter for="* redturtle.custommenu.factories.interfaces.ICustomMenuFactoryLayer"
+           name="plone.contentmenu.factories"
+           factory=".menu.FactoriesSubMenuItem"
+           provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
 
   <include package=".adapters" />
   <include package=".browser" />

@@ -1,13 +1,14 @@
-Introduction a basical use
-==========================
+Introduction to basical usage
+=============================
 
 Welcome to the guide of the usage of redturtle.custommenu.factories.
 We need to setup something before this file can became a real and working browser test for Plone.
-
+    
     >>> from Products.Five.testbrowser import Browser
     >>> browser = Browser()
+    >>> #browser.handleErrors = False
     >>> portal_url = self.portal.absolute_url()
-    >>> self.portal.error_log._ignored_exceptions = ()
+    >>> self.portal.error_log._ignored_exceptions = ('NotFound', 'Redirect', 'Unauthorized')
     >>> from Products.PloneTestCase.setup import portal_owner, default_password
 
 Ok, now we are ready to load the Plone site where this product is installed.
@@ -34,7 +35,7 @@ type (like a "News Item") but can't see the new command.
 
 Again, the contributor user can't go directly to the customization form if he know the URL.
 
-    >>> browser.open(portal_url+"/@@customize-factoriesmenu")
+    >>> browser.open(portal_url + "/@@customize-factoriesmenu")
     >>> "You do not have sufficient privileges to view this page" in browser.contents
     True
 
@@ -114,8 +115,8 @@ appear in the UI (see advanced section below).
 Now we can submit the form and see the result.
 
     >>> browser.getControl(name='add-command').click()
-	>>> 'New entry added' in browser.contents
-	True
+    >>> 'New entry added' in browser.contents
+    True
 
 First of all we are still in the customization form.
 

@@ -6,6 +6,7 @@
       for="OFS.interfaces.IFolder"
       name="customize-factoriesmenu"
       class=".view.CustomizeFactoriesMenu"
+	  template="view.pt"
       permission="redturtle.custommenu.factories.Manage"
       allowed_attributes="getSavedCustomizations"
       layer="..interfaces.ICustomMenuFactoryLayer"

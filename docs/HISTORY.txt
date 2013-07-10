@@ -6,6 +6,7 @@ Changelog
 
 * provided Generic Setup support [nueces]
 * now can't no-more manage menu without installing the product [keul]
+* no more global env JavaScript functions [keul] 
 
 0.2.0b - (2010-02-17)
 ---------------------

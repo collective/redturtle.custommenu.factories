@@ -19,7 +19,6 @@ class CustomizeFactoriesMenu(BrowserView):
         BrowserView.__init__(self, context, request)
         request.set('disable_border', True)
 
-    template = ViewPageTemplateFile('view.pt')
     enable_template = ViewPageTemplateFile('enabled.pt')
 
     def __call__(self):
@@ -53,7 +52,7 @@ class CustomizeFactoriesMenu(BrowserView):
             plone_utils.addPortalMessage(message, type=tp)
             return
         if self.enabled:
-            return self.template()
+            return self.index()
         return self.enable_template()
 
     def _addMenuEntry(self, form):

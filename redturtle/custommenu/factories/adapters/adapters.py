@@ -5,11 +5,13 @@ from zope.component import ComponentLookupError
 from Products.CMFCore.utils import getToolByName
 from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
 from redturtle.custommenu.factories import custommenuMessageFactory as _
+from redturtle.custommenu.factories import logger
 
 from Products.PageTemplates import Expressions
 from zope.tales.tales import CompilerError
 
 from zope.component import getMultiAdapter
+
 
 class MenuCoreAdapter(object):
 
@@ -30,8 +32,54 @@ class MenuCoreAdapter(object):
     def getMenuCustomization(self, data, results):
         raise NotImplementedError("You must provide the getMenuCustomization method")
 
+
 class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
     implements(ICustomFactoryMenuProvider)
+
+    def _get_menu_customizations(self):
+        context = self.context
+
+        try:
+            view = getMultiAdapter((context, context.REQUEST), name=u'customize-factoriesmenu')
+        except ComponentLookupError:
+            return results
+
+        extras, saved_customizations = view.getSavedCustomizations()
+        return saved_customizations
+
+    def _calc_menu_entry(self, customization, data, newIds):
+        # condition
+        talEngine = Expressions.getEngine()
+        condition = customization['condition-tales']
+        if condition:
+            compiledCondition = talEngine.compile(condition)
+            try:
+                result = compiledCondition(talEngine.getContext(data))
+            except KeyError, inst:
+                return
+            if not result and customization['element-id']:
+                newIds.append(customization['element-id'])
+                return
+
+        # URL
+        url = talEngine.compile(customization['element-tales'])
+        try:
+            compiledURL = url(talEngine.getContext(data))
+        except KeyError, inst:
+            logger.error("customize-factoriesmenu error: can't use the \"%s\" TALES expression" % condition)
+            return
+        # ICON
+        icon = talEngine.compile(customization['icon-tales'])
+        try:
+            compiledIcon = icon(talEngine.getContext(data))
+        except KeyError, inst:
+            compiledIcon = None
+        
+        if compiledURL:
+            newElement = self._formatNewEntry(customization, compiledURL, compiledIcon)
+            if newElement['extra']['id']:
+                newIds.append(newElement['extra']['id'])
+            return newElement
 
     def getMenuCustomization(self, data, results):
         """Get saved menu customization for a context that is the Plone site root
@@ -39,53 +87,36 @@ class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
         @results: a menu-like structure, normally obtained calling PloneFactoriesMenu.getMenuItems
         @return: the new menu-like structure, with additional customizations
         """
-        context = self.context
-        talEngine = Expressions.getEngine()
-        try:
-            view = getMultiAdapter((context, context.REQUEST), name=u'customize-factoriesmenu')
-        except ComponentLookupError:
-            return results
-
         newResults = []
         newIds = []
-        extras, saved_customizations = view.getSavedCustomizations()
+        
+        saved_customizations = self._get_menu_customizations()
+        
         for c in saved_customizations:
-            condition = c['condition-tales']
-            if condition:
-                compiledCondition = talEngine.compile(condition)
-                try:
-                    result = compiledCondition(talEngine.getContext(data))
-                except KeyError, inst:
-                    continue
-                if not result and c['element-id']:
-                    newIds.append(c['element-id'])
-                    continue
-
-            # URL
-            url = talEngine.compile(c['element-tales'])
-            try:
-                compiledURL = url(talEngine.getContext(data))
-            except KeyError, inst:
-                context.plone_log("customize-factoriesmenu error: can't use the \"%s\" TALES expression" % condition)
+            newElement = self._calc_menu_entry(c, data, newIds)
+            if not newElement:
                 continue
-            # ICON
-            icon = talEngine.compile(c['icon-tales'])
-            try:
-                compiledIcon = icon(talEngine.getContext(data))
-            except KeyError, inst:
-                print inst
-                compiledIcon = None
-            
-            if compiledURL:
-                newElement = self._formatNewEntry(c, compiledURL, compiledIcon)
-                if newElement['extra']['id']:
-                    newIds.append(newElement['extra']['id'])
-                newResults.append(newElement)
+            if newElement['extra']['id']:
+                newIds.append(newElement['extra']['id'])
+            newResults.append(newElement)
 
         # Spit off overriden elements, using id
         results = [x for x in results if x['extra']['id'] not in newIds]
         results.extend(newResults)
         return results
+
+    def getSingleEntryMenuCustomization(self, data, fti):
+        """
+        Customization for single-entry menu item
+        @fti: portal_types configuration
+        """
+        saved_customizations = self._get_menu_customizations()
+        foo = []
+
+        for c in saved_customizations:
+            if c['element-id'] == fti.id.lower().replace(' ',''):
+                newElement = self._calc_menu_entry(c, data, foo)
+                return newElement
 
 class FolderFactoryMenuAdapter(PloneSiteFactoryMenuAdapter):
     implements(ICustomFactoryMenuProvider)
