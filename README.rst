@@ -1,6 +1,7 @@
+.. contents::
+
 Summary
 =======
-.. contents::
 
 This product make possible the customization of the Plone "*Add new...*" menu, commonly filled
 from the Plone available content types.
