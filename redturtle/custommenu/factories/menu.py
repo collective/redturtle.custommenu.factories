@@ -81,7 +81,7 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
                                   context=self.request)
                 return pmf(u'label_add_type', default='Add ${type}',
                            mapping={'type' : title})
-        title = PloneFactoriesSubMenuItem.title.fget(self)
+        title = super(FactoriesSubMenuItem, self).title
         return title
 
     @property
@@ -92,7 +92,7 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
         if custom_menu_results:
             if not showConstrainOptions and len(itemsToAdd) == 1:
                 return custom_menu_results.get('description')
-        description = PloneFactoriesSubMenuItem.description.fget(self)
+        description = super(FactoriesSubMenuItem, self).description
         return description
 
     @property
@@ -100,7 +100,7 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
         custom_menu_results = self.getCustomMenuResults()
         if custom_menu_results:
             return custom_menu_results.get('action')
-        action = PloneFactoriesSubMenuItem.action.fget(self)
+        action = super(FactoriesSubMenuItem, self).action
         return action
 
     @property
@@ -108,7 +108,7 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
         custom_menu_results = self.getCustomMenuResults()
         if custom_menu_results:
             return custom_menu_results.get('icon')        
-        icon = PloneFactoriesSubMenuItem.action.fget(self)
+        icon = super(FactoriesSubMenuItem, self).icon
         return icon
 
 
