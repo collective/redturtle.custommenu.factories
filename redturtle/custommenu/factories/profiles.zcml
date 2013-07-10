@@ -7,7 +7,7 @@
       name="default"
       title="Customize the 'Add new...' menu"
       directory="profiles/default"
-      description="Manage the 'Add new...' menu in Plone"
+      description="Hide, enhance, change elements inside the content creation menu"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       />

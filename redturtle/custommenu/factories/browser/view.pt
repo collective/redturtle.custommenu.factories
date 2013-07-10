@@ -30,7 +30,7 @@
 		      tal:attributes="action string:${context/absolute_url}/@@customize-factoriesmenu">
 			<fieldset>
 				<legend i18n:translate="">Disable menu customizations here</legend>
-				<div class="formHelp" i18n:translate="help_enable_customizations">
+				<div class="formHelp" i18n:translate="help_disable_customizations">
 					Click the button below disable the customization feature in the current context
 				</div>
 				<input type="submit" name="disable-command" value="Disable"

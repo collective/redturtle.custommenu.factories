@@ -6,7 +6,7 @@ from zope.interface import implements
 from zope.component import ComponentLookupError
 from Products.CMFCore.utils import getToolByName
 from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
-from redturtle.custommenu.factories import custommenuMessageFactory as _
+from redturtle.custommenu.factories import custommenuMessageFactory as mf
 from redturtle.custommenu.factories import logger
 
 from Products.PageTemplates import Expressions
@@ -26,8 +26,8 @@ class MenuCoreAdapter(object):
 
     def _formatNewEntry(self, customization, url, icon):
         """Return a menu-like structure with the new additional element"""
-        return {'title'       : _(customization['element-name']),
-                'description' : _(customization['element-descr']),
+        return {'title'       : mf(customization['element-name']),
+                'description' : mf(customization['element-descr']),
                 'action'      : url,
                 'selected'    : False,
                 'icon'        : icon,

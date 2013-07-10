@@ -9,7 +9,7 @@ non-technical users.
 
 This product has been tested on **Plone 3.3** and **Plone 4**.
 
-You can use this to add new non-standard stuff to the menu (like Javascript links). See below.
+You can use this to add new non-standard stuff to the menu (like JavaScript links). See below.
 
 Idea behind this
 ================
@@ -75,13 +75,6 @@ Remember to add also the ZCML slug and overrides if you are testing this on Plon
 
 After this, install the new product in Plone.
 
-Uninstallation
---------------
-
-You can *reinstall* the products safely without lose any customization data.
-If you *uninstall* it, all customization will be removed from your Plone site, leaving no garbage
-behind.
-
 Customize the menu
 ------------------
 
@@ -139,17 +132,10 @@ In the TALES expression above, you can use those variables:
  `portal_url`
      The *portal_url* tool, taken from the Plone site.
 
-Examples and advanced features
-------------------------------
-
-Take a look to the README.txt file included to see some examples and to discover what this products can
-do in your Plone site.
-
 TODO
 ====
 
-* localization
-* javascript features for managing entries
+* JavaScript features for managing entries
 * code needs refactoring
 * think about inherit customizations not only from portal root
 * subsites testing needed

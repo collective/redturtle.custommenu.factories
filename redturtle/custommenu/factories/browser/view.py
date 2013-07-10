@@ -94,7 +94,7 @@ class CustomizeFactoriesMenu(BrowserView):
         annotations = IAnnotations(context)
         annotations[ANN_CUSTOMMENU_KEY] = ({'inherit': form.get('inherit',False)}, saved_customizations)
         annotations._p_changed=1
-        return _(u'Customization/s updated')
+        return _(u'Customizations updated')
 
     def _generateNewMenuElement(self, index, id, name, descr, icon, condition, element):
         return {'index': index,
@@ -119,7 +119,7 @@ class CustomizeFactoriesMenu(BrowserView):
         annotations = IAnnotations(context)
         annotations[ANN_CUSTOMMENU_KEY] = (extras, saved_customizations)
         annotations._p_changed=1
-        return _(u'Customization/s removed')
+        return _(u'Customizations removed')
 
     def enable(self):
         """Enabled local customization, adding the annotation structure"""
