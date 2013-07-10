@@ -134,7 +134,7 @@ Generic setup support
 
 Juan. [nueces] provided Generic Setup support for this package:
 
-.. code:: ini
+.. code:: xml
 
     <?xml version="1.0"?>
     <object>
