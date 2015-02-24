@@ -4,8 +4,9 @@ Changelog
 0.3.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Fixed issue when on folders that are not annotable
+  (uncommon, but may happen on old stuff like PloneGazette)
+  [keul]
 
 0.3.0 (2013-07-10)
 ------------------

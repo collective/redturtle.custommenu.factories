@@ -19,7 +19,7 @@ setup(name='redturtle.custommenu.factories',
         "Framework :: Plone :: 4.2",
         "Framework :: Plone :: 4.3",
         "Programming Language :: Python",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         ],
       keywords='plone menu factories customize',
       author='keul',
@@ -35,7 +35,7 @@ setup(name='redturtle.custommenu.factories',
           # -*- Extra requirements: -*-
       ],
       tests_require=tests_require,
-      extras_require=dict(tests=tests_require),
+      extras_require=dict(test=tests_require),
       test_suite = 'redturtle.custommenu.factories.tests.test_doctest.test_suite',
       entry_points="""
       [z3c.autoinclude.plugin]

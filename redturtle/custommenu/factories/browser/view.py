@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from zope.interface import implements, alsoProvides, noLongerProvides
-from zope.annotation.interfaces import IAnnotations
-
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-
-from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
 from redturtle.custommenu.factories import custommenuMessageFactory as _
+from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
 from redturtle.custommenu.factories.interfaces import ICustomMenuEnabled
+from zope.annotation.interfaces import IAnnotations
+from zope.interface import implements, alsoProvides, noLongerProvides
+
 
 class CustomizeFactoriesMenu(BrowserView):
     """View for managing custom factories menu"""

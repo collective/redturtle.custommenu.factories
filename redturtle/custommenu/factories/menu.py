@@ -1,34 +1,33 @@
 # -*- coding: utf-8 -*-
 
 from Acquisition import aq_inner, aq_parent
-from zope.annotation.interfaces import IAnnotations
-from zope.interface import implements
-from zope.component import getMultiAdapter
-from zope.component import queryMultiAdapter
-
-from plone.memoize.instance import memoize
-from zope.i18n import translate
-from zope.i18nmessageid.message import Message
-
+from OFS.interfaces import IFolder
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import PloneMessageFactory as pmf
+from plone.app.contentmenu.interfaces import IFactoriesMenu
+from plone.app.contentmenu.interfaces import IFactoriesSubMenuItem
 from plone.app.contentmenu.menu import FactoriesMenu as PloneFactoriesMenu
 from plone.app.contentmenu.menu import FactoriesSubMenuItem as PloneFactoriesSubMenuItem
 from plone.app.contentmenu.menu import _safe_unicode
-from plone.app.contentmenu.interfaces import IFactoriesMenu
-from plone.app.contentmenu.interfaces import IFactoriesSubMenuItem
-from Products.CMFCore.utils import getToolByName
-
-from OFS.interfaces import IFolder
-
+from plone.memoize.instance import memoize
 from redturtle.custommenu.factories import custommenuMessageFactory as _
 from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
 from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider, ICustomMenuFactoryLayer
+from zope.annotation.interfaces import IAnnotations
+from zope.annotation.interfaces import IAnnotations
+from zope.component import getMultiAdapter
+from zope.component import queryAdapter
+from zope.component import queryMultiAdapter
+from zope.i18n import translate
+from zope.i18nmessageid.message import Message
+from zope.interface import implements
 
-from Products.CMFPlone import PloneMessageFactory as pmf
 
 # Stolen from ploneview
 def isFolderOrFolderDefaultPage(context, request):
     context_state = getMultiAdapter((aq_inner(context), request), name=u'plone_context_state')
     return context_state.is_structural_folder() or context_state.is_default_page()
+
 
 class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
     implements(IFactoriesSubMenuItem)
@@ -56,6 +55,11 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
         request = self.request
         data = self._get_data()
 
+        # If folder can't be annotable, do nothing
+        # uncommon but may happen for old stuff like PloneGazette
+        if not queryAdapter(data['container'], interface=IAnnotations):
+            return None
+
         try:
             m_provider = ICustomFactoryMenuProvider(data['container'])
         except TypeError:
@@ -81,7 +85,8 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
                                   context=self.request)
                 return pmf(u'label_add_type', default='Add ${type}',
                            mapping={'type' : title})
-        title = super(FactoriesSubMenuItem, self).title
+        #title = super(FactoriesSubMenuItem, self).title
+        title = PloneFactoriesSubMenuItem.title.fget(self)
         return title
 
     @property
@@ -92,7 +97,8 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
         if custom_menu_results:
             if not showConstrainOptions and len(itemsToAdd) == 1:
                 return custom_menu_results.get('description')
-        description = super(FactoriesSubMenuItem, self).description
+        #description = super(FactoriesSubMenuItem, self).description
+        description = PloneFactoriesSubMenuItem.description.fget(self)
         return description
 
     @property
@@ -136,6 +142,11 @@ class FactoriesMenu(PloneFactoriesMenu):
             folder = context
 
         data = {'context': context, 'portal_url': portal_url, 'container': folder}
+
+        # If folder can't be annotable, do nothing
+        # uncommon but may happen for old stuff like PloneGazette
+        if not queryAdapter(folder, interface=IAnnotations):
+            return results
 
         try:
             m_provider = ICustomFactoryMenuProvider(folder)
