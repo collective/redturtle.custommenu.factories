@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 from OFS.interfaces import IFolder
 from zope.interface import implements, alsoProvides
@@ -5,8 +6,10 @@ from zope.component import adapts
 from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
 from redturtle.custommenu.factories.adapters.adapters import MenuCoreAdapter
 
+
 class ISpecialFolder(IFolder):
     pass
+
 
 class SpecialFolderFactoryMenuAdapter(MenuCoreAdapter):
     implements(ICustomFactoryMenuProvider)

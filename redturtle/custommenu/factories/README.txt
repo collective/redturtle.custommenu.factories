@@ -16,7 +16,7 @@ Ok, now we are ready to load the Plone site where this product is installed.
     >>> browser.open(portal_url)
 
 Our first test is to see that the "Customize menu..." element of the factories menu can't be used
-from normal users.
+by "normal" users.
 
     >>> browser.getLink('Log in').click()
     >>> browser.getControl(name='__ac_name').value = 'contributor'
@@ -233,7 +233,7 @@ Ok, now we remove the garbage of the "*fake*" element.
 
     >>> browser.getControl('Delete?', index=1).click()
     >>> browser.getControl(name='delete-command').click()
-    >>> 'Customization/s removed' in browser.contents
+    >>> 'Customizations removed' in browser.contents
     True
 
 Now we don't see anymore the "*fake*" entry in the form.

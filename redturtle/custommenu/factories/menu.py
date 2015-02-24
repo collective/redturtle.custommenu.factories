@@ -86,7 +86,12 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
                 return pmf(u'label_add_type', default='Add ${type}',
                            mapping={'type' : title})
         #title = super(FactoriesSubMenuItem, self).title
-        title = PloneFactoriesSubMenuItem.title.fget(self)
+        try:
+            # Plone 3: it's a @property
+            title = PloneFactoriesSubMenuItem.title.fget(self)
+        except AttributeError:
+            # Plone 4, it's only a zope.i18nmessageid.message.Message
+            title = super(FactoriesSubMenuItem, self).title
         return title
 
     @property
@@ -98,7 +103,12 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
             if not showConstrainOptions and len(itemsToAdd) == 1:
                 return custom_menu_results.get('description')
         #description = super(FactoriesSubMenuItem, self).description
-        description = PloneFactoriesSubMenuItem.description.fget(self)
+        try:
+            # Plone 3: it's a @property
+            description = PloneFactoriesSubMenuItem.description.fget(self)
+        except AttributeError:
+            # Plone 4, it's only a zope.i18nmessageid.message.Message
+            description = super(FactoriesSubMenuItem, self).description
         return description
 
     @property

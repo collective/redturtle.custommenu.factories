@@ -5,8 +5,11 @@ Changelog
 ------------------
 
 - Fixed issue when on folders that are not annotable
-  (uncommon, but may happen on old stuff like PloneGazette)
+  (uncommon, but may happen on old stuff like PloneGazette).
   [keul]
+- Plone 3/ Plone 4 compatibility on default menu title and description
+  [keul]
+
 
 0.3.0 (2013-07-10)
 ------------------
