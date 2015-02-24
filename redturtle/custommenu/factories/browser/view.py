@@ -8,7 +8,7 @@ from redturtle.custommenu.factories import custommenuMessageFactory as _
 from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
 from redturtle.custommenu.factories.interfaces import ICustomMenuEnabled
 from zope.annotation.interfaces import IAnnotations
-from zope.interface import implements, alsoProvides, noLongerProvides
+from zope.interface import alsoProvides, noLongerProvides
 
 
 class CustomizeFactoriesMenu(BrowserView):

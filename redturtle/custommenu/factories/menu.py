@@ -11,15 +11,11 @@ from plone.app.contentmenu.menu import FactoriesSubMenuItem as PloneFactoriesSub
 from plone.app.contentmenu.menu import _safe_unicode
 from plone.memoize.instance import memoize
 from redturtle.custommenu.factories import custommenuMessageFactory as _
-from redturtle.custommenu.factories.config import ANN_CUSTOMMENU_KEY
 from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider, ICustomMenuFactoryLayer
-from zope.annotation.interfaces import IAnnotations
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import queryAdapter
-from zope.component import queryMultiAdapter
 from zope.i18n import translate
-from zope.i18nmessageid.message import Message
 from zope.interface import implements
 
 
@@ -51,8 +47,6 @@ class FactoriesSubMenuItem(PloneFactoriesSubMenuItem):
 
     @memoize
     def getCustomMenuResults(self):
-        context = self.context
-        request = self.request
         data = self._get_data()
 
         # If folder can't be annotable, do nothing

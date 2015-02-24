@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import sys
-
-from zope.interface import implements
-from zope.component import ComponentLookupError
 from Products.CMFCore.utils import getToolByName
-from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
+from Products.PageTemplates import Expressions
 from redturtle.custommenu.factories import custommenuMessageFactory as mf
 from redturtle.custommenu.factories import logger
-
-from Products.PageTemplates import Expressions
-from zope.tales.tales import CompilerError
-
+from redturtle.custommenu.factories.interfaces import ICustomFactoryMenuProvider
+from zope.component import ComponentLookupError
 from zope.component import getMultiAdapter
+from zope.interface import implements
 
 if sys.version_info < (2, 6):
     PLONE4 = False
@@ -50,7 +46,7 @@ class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
         try:
             view = getMultiAdapter((context, context.REQUEST), name=u'customize-factoriesmenu')
         except ComponentLookupError:
-            return results
+            return []
 
         extras, saved_customizations = view.getSavedCustomizations()
         return saved_customizations
@@ -63,7 +59,7 @@ class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
             compiledCondition = talEngine.compile(condition)
             try:
                 result = compiledCondition(talEngine.getContext(data))
-            except KeyError, inst:
+            except KeyError:
                 return
             if not result and customization['element-id']:
                 newIds.append(customization['element-id'])
@@ -73,14 +69,14 @@ class PloneSiteFactoryMenuAdapter(MenuCoreAdapter):
         url = talEngine.compile(customization['element-tales'])
         try:
             compiledURL = url(talEngine.getContext(data))
-        except KeyError, inst:
+        except KeyError:
             logger.error("customize-factoriesmenu error: can't use the \"%s\" TALES expression" % condition)
             return
         # ICON
         icon = talEngine.compile(customization['icon-tales'])
         try:
             compiledIcon = icon(talEngine.getContext(data))
-        except KeyError, inst:
+        except KeyError:
             compiledIcon = None
         
         if compiledURL:

@@ -11,6 +11,8 @@ Changelog
   [keul]
 - Fixed tests
   [keul]
+- Pyflakes cleanup and related errors fixed
+  [keul]
 
 0.3.0 (2013-07-10)
 ------------------

@@ -1,12 +1,9 @@
 import unittest
 import doctest
-
-from zope.testing import doctestunit
-from zope.component import testing, eventtesting, provideAdapter
-
 from Testing import ZopeTestCase as ztc
-
 from redturtle.custommenu.factories.tests import base
+from zope.component import provideAdapter
+
 
 def setUp(test):
     """This method is used to set up the test environment. We pass it to the
