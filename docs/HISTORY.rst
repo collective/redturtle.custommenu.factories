@@ -9,7 +9,8 @@ Changelog
   [keul]
 - Plone 3/ Plone 4 compatibility on default menu title and description
   [keul]
-
+- Fixed tests
+  [keul]
 
 0.3.0 (2013-07-10)
 ------------------

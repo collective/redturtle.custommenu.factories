@@ -257,7 +257,7 @@ description.
 We must now click on the "*Save changes*" button.
 
     >>> browser.getControl('Save changes').click()
-    >>> 'Customization/s updated' in browser.contents
+    >>> 'Customizations updated' in browser.contents
     True
     >>> browser.getControl('Element description', index=0).value
     'A PDF document (ok, this is again a File content)'
