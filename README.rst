@@ -1,5 +1,10 @@
 .. contents::
 
+DEPRECATED
+==========
+
+Use `collective.factorymenu`_ on modern Plone.
+
 Summary
 =======
 
@@ -185,3 +190,4 @@ TODO
 * think about inherit customizations not only from portal root
 * subsites testing needed
 
+.. _collective.factorymenu: https://github.com/collective/collective.factorymenu
